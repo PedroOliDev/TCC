@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    background-image: url('../PaginaDeEntrada/backgroundTCC.jpg');
+    background-size: cover;      
+  background-repeat: no-repeat; 
+  background-position: center;
+}
+
+.criarConta{
+    background-color: #ffffff;
+    color: rgb(255, 0, 0);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px; 
+    border-radius: 20px;  
+    font-size: large; 
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+button {
+    background-color: #ff0000;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px; 
+    border-radius: 20px;  
+    font-size: large; 
+    font-weight: bold;
+}
+
+.cadastro {
+ display: flex;
+ flex-direction: row;
+position: absolute;
+left: 80%;    
+}
+
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+   align-items: center;
+    height: 75vh;
+    width: 100vh;
+    font-size:30px;
+    margin-right: 60vh;
+    
+}
