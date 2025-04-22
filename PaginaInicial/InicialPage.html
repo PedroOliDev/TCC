@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesIP.css">
+    <script src="https://accounts.google.com/gsi/client" async></script>
+
+    <title>Pagina Inicial</title>
+</head>
+<body>
+    
+
+    <script>
+        function handleCredentialResponse(response) {
+        }
+        
+        window.onload = function () {
+          google.accounts.id.initialize({
+            client_id: "844429812632-gi775pp6vfiqo2kbj5h0h9bam1u90pon.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+          });
+          google.accounts.id.renderButton(
+            document.getElementById("buttonDiv"),
+            { theme: "outline", size: "large" }  
+          );
+          google.accounts.id.prompt(); 
+        }
+      </script>
+
+    <Div class="containerPrincipal">
+        <h1>Falta pouco para matar sua fome!</h1>
+        <p>como deseja continuar?</p>
+        <div id="buttonDiv"></div>
+    </Div>
+</body>
+</html>
