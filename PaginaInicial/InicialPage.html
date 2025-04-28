@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesIP.css">
+    
     <script src="https://accounts.google.com/gsi/client" async></script>
 
     <title>Pagina Inicial</title>
@@ -13,6 +14,14 @@
 
     <script>
         function handleCredentialResponse(response) {
+          console.log(response.credential);
+          /* fetch('/your-backend-endpoint', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token: response.credential }), // Envia o token para o backend
+  }); */
         }
         
         window.onload = function () {
@@ -27,11 +36,53 @@
           google.accounts.id.prompt(); 
         }
       </script>
+      <img src="../logoTCC.jpg" alt="logo" class="logo">
 
     <Div class="containerPrincipal">
         <h1>Falta pouco para matar sua fome!</h1>
         <p>como deseja continuar?</p>
         <div id="buttonDiv"></div>
+        <form id="loginForm">
+          <input type="text" id="email"  placeholder="Email" required>
+          <input type="password" id="password" placeholder="Senha" required>
+          <button type="submit">Entrar</button>
+        </form>
     </Div>
+    <script>
+      document.getElementById('login-form').addEventListener('submit', async function(event) {
+        event.preventDefault();  // Impede o envio padrão do formulário
+  
+        // Coleta os dados do formulário
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+  
+        // Cria o objeto de dados a ser enviado para o backend
+        const data = {
+          email: email,
+          password: password
+        };
+  
+        try {
+          // Envia os dados para o backend usando fetch
+          const response = await fetch('http://localhost:5000/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)  // Envia os dados no corpo da requisição
+          });
+  
+          const result = await response.json();
+          if (response.ok) {
+            alert(result.message);  // Exibe mensagem de sucesso
+          } else {
+            alert(result.message);  // Exibe mensagem de erro
+          }
+        } catch (error) {
+          console.error('Erro ao enviar os dados:', error);
+          alert('Erro ao comunicar com o servidor');
+        }
+      });
+    </script>
 </body>
 </html>

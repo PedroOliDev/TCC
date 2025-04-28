@@ -1,0 +1,67 @@
+body {
+    background-color: red;
+   
+ 
+    
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    position: absolute;
+    left: 1%;
+}
+
+
+.item {
+    
+    background-color: #ffffff;
+    border-radius: 30px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
+  }
+
+.Menus {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 30px; 
+    height: 60vh;   
+    width: 100vh;
+    
+    border-radius: 50px;
+    position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+}
+
+.lanches {
+margin: 20px;
+}
+
+.pizzas {
+margin: 20px;
+
+}
+
+.doces {
+margin: 20px;
+}
+
+.salgados {
+margin: 20px;
+}
+
+.japonesa {
+margin: 20px;
+
+}
