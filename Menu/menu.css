@@ -1,7 +1,7 @@
 body {
     background-color: red;
    
- 
+    font-family: Arial, sans-serif;
     
 }
 
@@ -14,16 +14,40 @@ body {
     left: 1%;
 }
 
+.foodimg {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+ 
+}
+
 
 .item {
-    
-    background-color: #ffffff;
-    border-radius: 30px;
-    padding: 10px 20px;
+  
+  background-color: #ffffff;
+  border-radius: 30px;
+  padding: 10px 20px;
+  gap: 10px;
+  width: 37vh;
+  height: 10vh;
+  display: flex;
+  align-items: center;
+  
+  
+  }
+
+  .item:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .item h1 {
     display: flex;
     align-items: center;
-    gap: 10px;
-    height: 50px;
+    justify-content: center;
   }
 
 .Menus {
@@ -45,23 +69,68 @@ body {
 }
 
 .lanches {
+  display: flex;
 margin: 20px;
+align-items: center;
+margin: 5px;
+gap: 20px
 }
 
 .pizzas {
+  display: flex;
 margin: 20px;
-
+align-items: center;
+margin: 5px;
+gap: 20px
 }
 
 .doces {
+  display: flex;
 margin: 20px;
+align-items: center;
+margin: 5px;
+gap: 20px
 }
 
 .salgados {
+  display: flex;
 margin: 20px;
+align-items: center;
+margin: 5px;
+gap: 20px
 }
 
 .japonesa {
+  display: flex;
+  align-items: center;
 margin: 20px;
+margin: 5px;
+gap: 20px
 
+}
+
+.perfil-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.perfil-container:hover {
+  background-color: #e0e0e0;
+}
+
+.perfil-texto {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  font-family: Arial, sans-serif;
 }

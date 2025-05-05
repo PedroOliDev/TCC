@@ -36,20 +36,20 @@
           google.accounts.id.prompt(); 
         }
       </script>
-      <img src="../logoTCC.jpg" alt="logo" class="logo">
+      <img src="../imagens/logoTCC.jpg" alt="logo" class="logo">
 
     <Div class="containerPrincipal">
         <h1>Falta pouco para matar sua fome!</h1>
         <p>como deseja continuar?</p>
         <div id="buttonDiv"></div>
         <form id="loginForm">
-          <input type="text" id="email"  placeholder="Email" required>
-          <input type="password" id="password" placeholder="Senha" required>
+          <input type="text" id="email"  placeholder="Email" >
+          <input type="password" id="password" placeholder="Senha">
           <button type="submit">Entrar</button>
         </form>
     </Div>
     <script>
-      document.getElementById('login-form').addEventListener('submit', async function(event) {
+      document.getElementById('loginForm').addEventListener('submit', async function(event) {
         event.preventDefault();  // Impede o envio padrão do formulário
   
         // Coleta os dados do formulário
@@ -74,7 +74,7 @@
   
           const result = await response.json();
           if (response.ok) {
-            alert(result.message);  // Exibe mensagem de sucesso
+            window.location.href = '../Menu/menu.html'; // Exibe mensagem de sucesso
           } else {
             alert(result.message);  // Exibe mensagem de erro
           }
