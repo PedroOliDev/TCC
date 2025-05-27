@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Inscrição</title>
+    <link rel="stylesheet" href="inscriçao.css">
+  </head>
+<body>
+
+  <form id="formInscricao">
+    <label for="nome">Nome</label>
+    <input type="text" id="nome" required>
+
+    <label for="endereco">Endereço</label>
+    <input type="text" id="endereco" required>
+
+    <label for="email">Número/Email</label>
+    <input type="text" id="email" required>
+
+    <label for="dia">Escolha um dia da semana</label>
+    <select id="dia" required>
+      <option value="">Selecione</option>
+      <option value="segunda">Segunda-feira</option>
+      <option value="terca">Terça-feira</option>
+      <option value="quarta">Quarta-feira</option>
+      <option value="quinta">Quinta-feira</option>
+      <option value="sexta">Sexta-feira</option>
+    </select>
+
+    <button type="submit">ENVIAR</button>
+    <div class="mensagem" id="mensagem"></div>
+  </form>
+
+  <script>
+    const form = document.getElementById("formInscricao");
+    const mensagem = document.getElementById("mensagem");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const dados = {
+        nome: document.getElementById("nome").value,
+        endereco: document.getElementById("endereco").value,
+        email: document.getElementById("email").value,
+        dia: document.getElementById("dia").value,
+      };
+
+      try {
+        const response = await fetch("http://localhost:5000/inscricao", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(dados)
+        });
+
+        const resultado = await response.json();
+
+        if (response.ok) {
+          mensagem.textContent = "Inscrição realizada com sucesso!";
+          mensagem.style.color = "lime";
+          form.reset();
+        } else {
+          mensagem.textContent = "Erro: " + resultado.message;
+          mensagem.style.color = "yellow";
+        }
+
+      } catch (error) {
+        mensagem.textContent = "Erro de conexão com o servidor.";
+        mensagem.style.color = "orange";
+      }
+    });
+  </script>
+
+</body>
+</html>
