@@ -14,15 +14,28 @@
 
     <script>
         function handleCredentialResponse(response) {
-          console.log(response.credential);
-           fetch('/login', {
+  console.log("Token recebido:", response.credential);
+  fetch('http://localhost:5000/register-google', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ token: response.credential }), // Envia o token para o backend
-  }); 
-        }
+    body: JSON.stringify({ token: response.credential }),
+  })
+  .then(async res => {
+    const result = await res.json();
+    if (res.ok) {
+      window.location.href = '../Menu/menu.html';  // Redireciona se o status HTTP for 200
+    } else {
+      alert(result.message || "Erro no login com Google.");
+    }
+  })
+  .catch(error => {
+    console.error("Erro no login com Google:", error);
+    alert("Falha na autenticação com Google.");
+  });
+}
+
         
         window.onload = function () {
           google.accounts.id.initialize({

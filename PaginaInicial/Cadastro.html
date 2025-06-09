@@ -13,16 +13,29 @@
     
 
     <script>
-        function handleCredentialResponse(response) {
-          console.log(response.credential);
-           fetch('/register', {
+       function handleCredentialResponse(response) {
+  console.log("Token recebido:", response.credential);
+  fetch('http://localhost:5000/register-google', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ token: response.credential }), // Envia o token para o backend
-  }); 
-        }
+    body: JSON.stringify({ token: response.credential }),
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.message === "Login com Google bem-sucedido!" || "Usuário Google cadastrado com sucesso!") {
+      window.location.href = '../Menu/menu.html';  // redireciona após login Google
+    } else {
+      alert(result.message || "Erro no login com Google");
+    }
+  })
+  .catch(error => {
+    console.error("Erro no login Google:", error);
+    alert("Falha na autenticação com Google.");
+  });
+}
+
         
         window.onload = function () {
           google.accounts.id.initialize({
