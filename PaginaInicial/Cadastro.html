@@ -13,6 +13,8 @@
     
 
     <script>
+// Para funcionar o login com google o site precisa estar em um Localhost
+
        function handleCredentialResponse(response) {
   console.log("Token recebido:", response.credential);
   fetch('http://localhost:5000/register-google', {
