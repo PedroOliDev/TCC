@@ -5,30 +5,57 @@
       padding: 20px;
     }
 
+    .logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  position: absolute;
+  left: 1%;
+}
+
     form {
-      max-width: 400px;
+      height: 70vh;
+      max-width: 500px;
       margin: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 70px;
+      border: 2px solid #fff;
+      animation: mudar-cor 4s infinite;
+      border-radius: 15px;
     }
+
+    @keyframes mudar-cor {
+  0% { box-shadow: 0 0 15px #00ffff; }
+  33% { box-shadow: 0 0 15px #ff00ff; }
+  66% { box-shadow: 0 0 15px #ffff00; }
+  100% { box-shadow: 0 0 15px #00ffff; }
+}
 
     label {
       font-weight: bold;
       display: block;
       margin-top: 20px;
+      margin-left: 13%;
     }
 
     input, select {
-      width: 100%;
+      width: 50vh;
       padding: 10px;
       margin-top: 5px;
       border: 1px solid white;
       border-radius: 6px;
       background: #d40000;
       color: white;
+      margin-left: 13%;
     }
 
     button {
+      margin-left: 13%;
       margin-top: 30px;
-      width: 100%;
+      width: 50vh;
       padding: 12px;
       font-size: 18px;
       background-color: #222;
