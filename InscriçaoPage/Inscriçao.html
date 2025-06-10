@@ -27,7 +27,7 @@
       <option value="sexta">Sexta-feira</option>
     </select>
 
-    <button type="submit">ENVIAR</button>
+    <button type="submit" onclick="baixarPDF()">ENVIAR</button>
     <div class="mensagem" id="mensagem"></div>
   </form>
 
@@ -70,6 +70,22 @@
         mensagem.style.color = "orange";
       }
     });
+
+    function baixarPDF() {
+      if (!document.getElementById("nome").value || 
+          !document.getElementById("endereco").value || 
+          !document.getElementById("email").value || 
+          !document.getElementById("dia").value) {
+        alert("Por favor, preencha todos os campos antes de baixar o PDF.");
+        return;
+      }
+      else {
+      const link = document.createElement('a');
+      link.href = 'pagamento_pdf.pdf';
+      link.download = 'pagamento_pdf.pdf';
+      link.click();
+    }
+  }
   </script>
 
 </body>
