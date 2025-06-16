@@ -1,93 +1,114 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
+  <link rel="stylesheet" href="assinatura.css">
   <meta charset="UTF-8">
-  <title>Inscrição</title>
-    <link rel="stylesheet" href="inscriçao.css">
-  </head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assinatura com Pagamento</title>
+</head>
 <body>
-<img src="../imagens/logoTCC.jpg" alt="logo" class="logo">
-  <form id="formInscricao">
-    <label for="nome">Nome</label>
-    <input type="text" id="nome" required>
+  <div class="perfil-container" onclick="window.location.href='../Perfil/perfil.html'">
+    <span class="perfil-texto">Meu perfil</span>
+  </div>
 
-    <label for="endereco">Endereço</label>
-    <input type="text" id="endereco" required>
+  <img src="../imagens/logoTCC.jpg" alt="logo" class="logo">
 
-    <label for="email">Email</label>
-    <input type="text" id="email" required>
+  <div class="container">
+    <form onsubmit="return false;">
+      <h2>Assinatura Mensal</h2>
 
-    <label for="dia">Escolha um dia da semana</label>
-    <select id="dia" required>
-      <option value="">Selecione</option>
-      <option value="segunda">Segunda-feira</option>
-      <option value="terca">Terça-feira</option>
-      <option value="quarta">Quarta-feira</option>
-      <option value="quinta">Quinta-feira</option>
-      <option value="sexta">Sexta-feira</option>
-    </select>
+      <label>Endereço:</label>
+      <input type="text" id="endereco" placeholder="Digite seu endereço" required>
 
-    <button type="submit" onclick="baixarPDF()">ENVIAR</button>
-    <div class="mensagem" id="mensagem"></div>
-  </form>
+      <label>Dia de entrega:</label>
+      <select id="dia">
+        <option value="segunda-feira">Segunda-feira</option>
+        <option value="terça-feira">Terça-feira</option>
+        <option value="quarta-feira">Quarta-feira</option>
+        <option value="quinta-feira">Quinta-feira</option>
+        <option value="sexta-feira">Sexta-feira</option>
+      </select>
+
+      <label>Forma de pagamento:</label>
+      <select id="metodo">
+        <option value="pix">PIX</option>
+        <option value="cartao">Cartão de Crédito</option>
+      </select>
+
+      <div class="payment-details" id="detalhes-cartao" style="display: none;">
+        <label>Número do cartão:</label>
+        <input type="text" id="cc_num" placeholder="0000 0000 0000 0000">
+
+        <label>Validade (MM/AA):</label>
+        <input type="text" id="cc_val" placeholder="12/25">
+
+        <label>CVV:</label>
+        <input type="text" id="cc_cvv" placeholder="123">
+      </div>
+
+      <button type="button" id="btnAssinar">Assinar agora</button>
+      <p class="status" id="status"></p>
+    </form>
+  </div>
 
   <script>
-    const form = document.getElementById("formInscricao");
-    const mensagem = document.getElementById("mensagem");
+    const metodo = document.getElementById('metodo');
+    const detalhes = document.getElementById('detalhes-cartao');
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    metodo.addEventListener('change', () => {
+      detalhes.style.display = metodo.value === 'cartao' ? 'block' : 'none';
+    });
 
-      const dados = {
-        nome: document.getElementById("nome").value,
-        endereco: document.getElementById("endereco").value,
-        email: document.getElementById("email").value,
-        dia: document.getElementById("dia").value,
+    document.getElementById('btnAssinar').addEventListener('click', () => {
+      const btn = document.getElementById('btnAssinar');
+      const status = document.getElementById('status');
+      btn.disabled = true;
+      status.textContent = 'Processando...';
+
+      const payload = {
+        endereco: document.getElementById('endereco').value.trim(),
+        dia: document.getElementById('dia').value,
+        metodo: metodo.value
       };
 
-      try {
-        const response = await fetch("http://localhost:5000/inscricao", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: "include",
-          body: JSON.stringify(dados)
-        });
-
-        const resultado = await response.json();
-
-        if (response.ok) {
-          mensagem.textContent = "Inscrição realizada com sucesso!";
-          mensagem.style.color = "lime";
-          form.reset();
-        } else {
-          mensagem.textContent = "Erro: " + resultado.message;
-          mensagem.style.color = "yellow";
-        }
-
-      } catch (error) {
-        mensagem.textContent = "Erro de conexão com o servidor.";
-        mensagem.style.color = "orange";
+      if (metodo.value === 'cartao') {
+        payload.cc = {
+          numero: document.getElementById('cc_num').value.trim(),
+          validade: document.getElementById('cc_val').value.trim(),
+          cvv: document.getElementById('cc_cvv').value.trim()
+        };
+      } else if (metodo.value === 'pix') {
+      
+        baixarPDF();
       }
+
+      // Envia os dados da assinatura
+      fetch('http://localhost:5000/assinatura', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        credentials: 'include'
+      })
+      .then(res => res.json().then(body => ({ status: res.status, body })))
+      .then(({ status: st, body }) => {
+        status.style.color = st === 200 ? 'green' : 'red';
+        status.textContent = body.message || 'Erro';
+      })
+      .catch(() => {
+        status.style.color = 'red';
+        status.textContent = 'Erro de conexão';
+      })
+      .finally(() => btn.disabled = false);
     });
 
     function baixarPDF() {
-      if (!document.getElementById("nome").value || 
-          !document.getElementById("endereco").value || 
-          !document.getElementById("email").value || 
-          !document.getElementById("dia").value) {
-        alert("Por favor, preencha todos os campos antes de baixar o PDF.");
-        return;
-      }
-      else {
       const link = document.createElement('a');
-      link.href = 'pagamento_pdf.pdf';
-      link.download = 'pagamento_pdf.pdf';
+      link.href = '../InscriçaoPage/pagamento_pdf.pdf'; // caminho correto no seu projeto
+      link.download = 'PagamentoPIX.pdf';
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     }
-  }
   </script>
-
 </body>
 </html>

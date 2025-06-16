@@ -5,6 +5,7 @@ from mysql.connector import Error
 from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
 from flask import Flask, session
+from datetime import date, timedelta
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5500"}})
@@ -18,7 +19,7 @@ def conectar():
     return mysql.connector.connect(
         host='localhost',
         user='root',
-        password='21102110p',
+        password='Senai@118',
         database='food4you_db'
     )
 
@@ -50,27 +51,69 @@ def perfil():
 
 
 # 📝 Rota para inscrição (formulário separado)
-@app.route("/inscricao", methods=["POST"])
-def inscricao():
-    data = request.get_json()
+@app.route('/assinatura', methods=['POST'])
+def criar_assinatura():
+    if 'usuario_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
 
-    endereco = data.get("endereco")
-    email = data.get("email")
-    dia = data.get("dia")
+    data = request.get_json()
+    endereco = data.get('endereco')
+    dia = data.get('dia')
+    metodo = data.get('metodo')
+    usuario_id = session['usuario_id']
+
+    if not endereco or not dia or not metodo:
+        return jsonify({'message': 'Campos obrigatórios faltando'}), 400
+
+    # Simulação de validação de dados do cartão
+    if metodo == 'cartao':
+        cc = data.get('cc') or {}
+        if not cc.get('numero') or not cc.get('validade') or not cc.get('cvv'):
+            return jsonify({'message': 'Dados do cartão incompletos'}), 400
 
     try:
-        db = conectar()
-        cursor = db.cursor()
-        cursor.execute("INSERT INTO inscricoes (endereco, email, dia) VALUES ( %s, %s, %s)",
-                       ( endereco, email, dia))
-        db.commit()
-        return jsonify({"message": "Inscrição salva com sucesso."}), 200
-    except Exception as e:
-        return jsonify({"message": f"Erro ao salvar: {str(e)}"}), 500
+        conn = conectar()
+        cursor = conn.cursor()
+
+        # Simulação do processo de pagamento
+        if metodo == 'pix':
+            pagamento_ok = True  # suponha aprovação imediata
+            detalhe_pag = 'Via PIX'
+        else:
+            pagamento_ok = True  # suponha aprovação
+            detalhe_pag = f"Cartão final {cc.get('numero')[-4:]}"
+
+        if not pagamento_ok:
+            return jsonify({'message': 'Pagamento recusado'}), 402
+
+        data_inicio = date.today()
+        proximo = data_inicio + timedelta(days=30)
+
+        cursor.execute("""
+            INSERT INTO assinaturas 
+              (id_usuario, data_inicio, status, proximo_pagamento, dia, endereco)
+            VALUES (%s, %s, 'ativa', %s, %s, %s)
+        """, (usuario_id, data_inicio, proximo, dia, endereco))
+        conn.commit()
+
+        return jsonify({
+            'message': f'Assinatura criada com sucesso! {detalhe_pag}',
+            'assinatura': {
+                'data_inicio': str(data_inicio),
+                'proximo_pagamento': str(proximo),
+                'status': 'ativa',
+                'dia': dia,
+                'endereco': endereco,
+                'metodo': metodo
+            }
+        }), 200
+
+    except Error as e:
+        return jsonify({'message': f'Erro ao criar assinatura: {str(e)}'}), 500
     finally:
-        if 'db' in locals() and db.is_connected():
+        if conn.is_connected():
             cursor.close()
-            db.close()
+            conn.close()
 
 
 @app.route('/register', methods=['POST'])
@@ -81,23 +124,40 @@ def register():
     senha = dados.get('password')
 
     if not email or not senha or not nome:
-        return jsonify({'message': 'preencha todas as tabelas'}), 400
+        return jsonify({'message': 'Preencha todas as tabelas'}), 400
 
     try:
         conn = conectar()
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO usuarios (nome, email, senha, endereco, dia, foto_url) VALUES (%s, %s, %s, NULL, NULL, NULL)', 
-               (nome, email, senha))
+        cursor = conn.cursor(dictionary=True)
+
+  
+        cursor.execute(
+            'INSERT INTO usuarios (nome, email, senha, endereco, dia, foto_url) VALUES (%s, %s, %s, NULL, NULL, NULL)', 
+            (nome, email, senha)
+        )
         conn.commit()
-        return jsonify({'message': 'Usuário cadastrado com sucesso!'}), 201
+
+        # Busca o usuário recém cadastrado
+        cursor.execute('SELECT * FROM usuarios WHERE email = %s AND nome = %s', (email, nome))
+        usuario = cursor.fetchone()
+
+        # Armazena dados na sessão
+        session['usuario_id'] = usuario['id']
+        session['usuario_nome'] = usuario['nome']
+        session['usuario_email'] = usuario['email']
+
+        return jsonify({'message': 'Usuário cadastrado com sucesso!', 'usuario': usuario}), 201
+
     except Error as e:
         if e.errno == 1062:
             return jsonify({'message': 'Usuário já existe, vá para página de entrada.'}), 409
-        return jsonify({'message': 'Erro no servidor'}), 500
+        return jsonify({'message': f'Erro no servidor: {str(e)}'}), 500
+
     finally:
         if conn.is_connected():
             cursor.close()
             conn.close()
+
 
 
 
@@ -194,7 +254,6 @@ def register_google():
         return jsonify({'message': 'Token não fornecido'}), 400
 
     try:
-        # 🧠 Verificar o token JWT com o Google
         idinfo = id_token.verify_oauth2_token(
             token,
             grequests.Request(),
@@ -202,23 +261,33 @@ def register_google():
         )
 
         email = idinfo.get('email')
+        nome = idinfo.get('name')  
 
-        if not email:
-            return jsonify({'message': 'Não foi possível obter o email da conta Google'}), 400
-
-        # 👤 Verifica se o usuário já está no banco
         conn = conectar()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.execute('SELECT * FROM usuarios WHERE email = %s', (email,))
         usuario = cursor.fetchone()
 
         if usuario:
-            return jsonify({'message': 'Login com Google bem-sucedido!'}), 200
+            # ✅ Login automático
+            session['usuario_id'] = usuario['id']
+            session['usuario_nome'] = usuario['nome']
+            session['usuario_email'] = usuario['email']
+            return jsonify({'message': 'Login com Google bem-sucedido!', 'usuario': usuario}), 200
         else:
-            # Cadastra o usuário no banco com senha nula
-            cursor.execute('INSERT INTO usuarios (email, senha) VALUES (%s, %s)', (email, 'GOOGLE'))
+            # ✅ Cadastro
+            cursor.execute('INSERT INTO usuarios (nome, email, senha) VALUES (%s, %s, %s)', (nome, email, 'GOOGLE'))
             conn.commit()
-            return jsonify({'message': 'Usuário Google cadastrado com sucesso!'}), 201
+
+            # ✅ Buscar novamente e logar
+            cursor.execute('SELECT * FROM usuarios WHERE email, nome = %s,%s', (email,nome))
+            usuario = cursor.fetchone()
+            session['usuario_id'] = usuario['id']
+            session['usuario_nome'] = usuario['nome']
+            session['usuario_email'] = usuario['email']
+
+            return jsonify({'message': 'Usuário Google cadastrado e logado com sucesso!', 'usuario': usuario}), 201
+
     except ValueError:
         return jsonify({'message': 'Token inválido'}), 401
     except Error as e:

@@ -5,6 +5,10 @@
       padding: 20px;
     }
 
+.status {margin-top:10px;}
+
+    .payment-details {display:none; margin-top:10px;}
+
     .logo {
   width: 70px;
   height: 70px;
@@ -13,10 +17,18 @@
   position: absolute;
   left: 1%;
 }
+h2 {
+      text-align: center;
+      color: white;
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
     form {
-      height: 70vh;
-      max-width: 500px;
+      height: 80vh;
+        padding: 60px;
+        max-width: 500px;
       margin: auto;
       display: flex;
       flex-direction: column;
@@ -34,11 +46,38 @@
   100% { box-shadow: 0 0 15px #00ffff; }
 }
 
+.perfil-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .perfil-container:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .perfil-texto {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
     label {
       font-weight: bold;
       display: block;
       margin-top: 20px;
       margin-left: 13%;
+      ;
     }
 
     input, select {
