@@ -1,11 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Perfil do Usuário</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    .perfil-container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .foto-preview {
+      display: block;
+      margin: auto;
+      margin-bottom: 10px;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  </style>
 </head>
 <body>
+
+  <div class="perfil-container">
+    <h2>Seu Perfil</h2>
+
+    <img src="" alt="Foto de perfil" class="foto-preview" id="fotoPreview" />
+
+    <input type="file" id="foto" accept="image/*" />
     
+    <input type="text" id="nome" placeholder="Nome completo" />
+    <input type="email" id="email" placeholder="Email" disabled />
+    <input type="password" id="senha" placeholder="Nova senha" />
+
+    <input type="text" id="endereco" placeholder="Endereço de entrega" />
+    <select id="dia">
+      <option value="">Dia de entrega</option>
+      <option value="segunda">Segunda</option>
+      <option value="terça">Terça</option>
+      <option value="quarta">Quarta</option>
+      <option value="quinta">Quinta</option>
+      <option value="sexta">Sexta</option>
+    </select>
+
+    <button onclick="salvarPerfil()">Salvar Alterações</button>
+  </div>
+
+  <script>
+    // 🔄 Carrega perfil ao entrar na página
+    window.onload = () => {
+      fetch("http://localhost:5000/perfil", {
+        method: "GET",
+        credentials: "include"
+      })
+      .then(res => {
+        if (res.status === 401) {
+          alert("Você precisa estar logado.");
+          window.location.href = "C:\Users\CLAUDIO GUIMARAES\OneDrive\Documentos\TCC\TCC\PaginaInicial\Login.html";
+        }
+        return res.json();
+      })
+      .then(usuario => {
+        document.getElementById('nome').value = usuario.nome || '';
+        document.getElementById('email').value = usuario.email || '';
+        document.getElementById('endereco').value = usuario.endereco || '';
+        document.getElementById('dia').value = usuario.dia || '';
+        if (usuario.foto_url) {
+          document.getElementById('fotoPreview').src = usuario.foto_url;
+        } else {
+          document.getElementById('fotoPreview').src = 'https://via.placeholder.com/100';
+        }
+      });
+    };
+
+    // 💾 Envia dados atualizados
+    function salvarPerfil() {
+      const nome = document.getElementById('nome').value;
+      const senha = document.getElementById('senha').value;
+      const endereco = document.getElementById('endereco').value;
+      const dia = document.getElementById('dia').value;
+      const foto = document.getElementById('foto').files[0];
+
+      const formData = new FormData();
+      formData.append('nome', nome);
+      formData.append('senha', senha);
+      formData.append('endereco', endereco);
+      formData.append('dia', dia);
+      if (foto) formData.append('foto', foto);
+
+      fetch("http://localhost:5000/atualizar-perfil", {
+        method: "POST",
+        body: formData,
+        credentials: "include"
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        location.reload();
+      });
+    }
+  </script>
 </body>
 </html>

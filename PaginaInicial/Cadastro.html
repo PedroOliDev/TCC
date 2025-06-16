@@ -22,6 +22,7 @@
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: "include",
     body: JSON.stringify({ token: response.credential }),
   })
   .then(res => res.json())
@@ -58,6 +59,7 @@
         <p>como deseja continuar?</p>
         <div id="buttonDiv"></div>
         <form id="loginForm">
+          <input type="text" id="name" placeholder="Nome" >
           <input type="text" id="email"  placeholder="Email" >
           <input type="password" id="password" placeholder="Senha">
           <button type="submit">Entrar</button>
@@ -67,12 +69,13 @@
       document.getElementById('loginForm').addEventListener('submit', async function(event) {
         event.preventDefault();  
   
-        
+        const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
   
         
         const data = {
+          name: name,
           email: email,
           password: password
         };
@@ -84,6 +87,7 @@
             headers: {
               'Content-Type': 'application/json'
             },
+            credentials: "include",
             body: JSON.stringify(data)  
           });
   

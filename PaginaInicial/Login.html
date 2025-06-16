@@ -22,6 +22,7 @@
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: "include",
     body: JSON.stringify({ token: response.credential }),
   })
   .then(async res => {
@@ -84,6 +85,7 @@
             headers: {
               'Content-Type': 'application/json'
             },
+            credentials: "include",
             body: JSON.stringify(data)  
           });
   
