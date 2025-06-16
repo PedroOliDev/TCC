@@ -20,15 +20,6 @@
     <input type="email" id="email" placeholder="Email" disabled />
     <input type="password" id="senha" placeholder="Nova senha" />
 
-    <input type="text" id="endereco" placeholder="Endereço de entrega" />
-    <select id="dia">
-      <option value="">Dia de entrega</option>
-      <option value="segunda">Segunda</option>
-      <option value="terça">Terça</option>
-      <option value="quarta">Quarta</option>
-      <option value="quinta">Quinta</option>
-      <option value="sexta">Sexta</option>
-    </select>
 
     <button onclick="salvarPerfil()">Salvar Alterações</button>
   </div>
@@ -50,8 +41,7 @@
       .then(usuario => {
         document.getElementById('nome').value = usuario.nome || '';
         document.getElementById('email').value = usuario.email || '';
-        document.getElementById('endereco').value = usuario.endereco || '';
-        document.getElementById('dia').value = usuario.dia || '';
+  
         if (usuario.foto_url) {
           document.getElementById('fotoPreview').src = usuario.foto_url;
         } else {
@@ -64,15 +54,11 @@
     function salvarPerfil() {
       const nome = document.getElementById('nome').value;
       const senha = document.getElementById('senha').value;
-      const endereco = document.getElementById('endereco').value;
-      const dia = document.getElementById('dia').value;
       const foto = document.getElementById('foto').files[0];
 
       const formData = new FormData();
       formData.append('nome', nome);
       formData.append('senha', senha);
-      formData.append('endereco', endereco);
-      formData.append('dia', dia);
       if (foto) formData.append('foto', foto);
 
       fetch("http://localhost:5000/atualizar-perfil", {

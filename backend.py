@@ -33,7 +33,7 @@ def perfil():
     try:
         conn = conectar()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT nome, email, endereco, dia, foto_url FROM usuarios WHERE id = %s", (usuario_id,))
+        cursor.execute("SELECT nome, email, foto_url FROM usuarios WHERE id = %s", (usuario_id,))
         usuario = cursor.fetchone()
 
         if usuario:
@@ -132,7 +132,7 @@ def register():
 
   
         cursor.execute(
-            'INSERT INTO usuarios (nome, email, senha, endereco, dia, foto_url) VALUES (%s, %s, %s, NULL, NULL, NULL)', 
+            'INSERT INTO usuarios (nome, email, senha, foto_url) VALUES (%s, %s, %s, NULL)', 
             (nome, email, senha)
         )
         conn.commit()
@@ -169,8 +169,6 @@ def atualizar_perfil():
     usuario_id = session['usuario_id']
     nome = request.form.get('nome')
     senha = request.form.get('senha')
-    endereco = request.form.get('endereco')
-    dia = request.form.get('dia')
     foto = request.files.get('foto')
 
     try:
@@ -185,8 +183,8 @@ def atualizar_perfil():
             foto_url = f'/static/fotos/{usuario_id}.jpg'
 
         # Atualiza os dados
-        query = "UPDATE usuarios SET nome=%s, senha=%s, endereco=%s, dia=%s"
-        valores = [nome, senha, endereco, dia]
+        query = "UPDATE usuarios SET nome=%s, senha=%s"
+        valores = [nome, senha]
 
         if foto_url:
             query += ", foto_url=%s"
