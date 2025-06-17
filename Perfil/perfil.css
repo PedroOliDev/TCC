@@ -2,9 +2,39 @@
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      background-color: #ff0000;
+      background-color: rgba(255, 4, 4, 0.697);
+     
     }
 
+    .stars {
+  position: fixed; /* cobre a tela toda */
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  top: 0;
+  left: 0;
+}
+
+/* Estilo de cada estrela */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: blink 2s infinite ease-in-out;
+  opacity: 0.8;
+}
+
+/* Animação de brilho */
+@keyframes blink {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
     .perfil-container {
       max-width: 400px;
       margin: auto;
