@@ -51,9 +51,7 @@ h2 {
     position: absolute;
     top: 20px;
     right: 20px;
-    background-color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
+    border-radius: 100px;
     font-size: 16px;
     font-weight: bold;
     color: #333;
@@ -63,7 +61,7 @@ h2 {
   }
   
   .perfil-container:hover {
-    background-color: #e0e0e0;
+   
   }
   
   .perfil-texto {

@@ -7,12 +7,21 @@
     <title>Pizzas</title>
 </head>
 <body>
-    
-    <div class="perfil-container" onclick="window.location.href='perfil.html'">
-        <span class="perfil-texto">Meu perfil</span>
-      </div>
+    <div class="navbar">
     <img src="../imagens/logoTCC.jpg" alt="logo" class="logo">
-    
+<div class="perfil-container" onclick="window.location.href='perfil.html'">
+        <img id="fotoPerfil" alt="Foto de perfil">
+      </div>
+    <div class="nav-links">
+      <a href="index.html">Início</a>
+      <a href="menu.html">Menu</a>
+      <a href="inscricao.html">Inscrição</a>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" placeholder="Pesquisar...">
+    </div>
+  </div>
     <div class="maincontainer">
         <div class="item1">
             <img src="../imagens/pizzahut.png" alt="pizzaria1">
@@ -26,5 +35,23 @@
         </div>
 
     </div>
+    <script>
+        window.onload = async () => {
+  const res = await fetch("http://localhost:5000/perfil", {
+    credentials: "include"
+  });
+
+  if (res.ok) {
+    const usuario = await res.json();
+    const foto = document.getElementById("fotoPerfil");
+
+    if (usuario.foto_url) {
+      foto.src = `http://localhost:5000${usuario.foto_url}`;
+    } else {
+      foto.src = 'default.png'; // imagem padrão se o usuário não tiver foto
+    }
+  }
+};
+    </script>
 </body>
 </html>
