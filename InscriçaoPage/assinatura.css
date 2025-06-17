@@ -47,6 +47,7 @@ h2 {
   100% { box-shadow: 0 0 15px #00ffff; }
 }
 
+
 .perfil-container {
     position: absolute;
     top: 20px;
@@ -112,3 +113,23 @@ h2 {
       margin-top: 20px;
       font-weight: bold;
     }
+
+    #fotoPerfil {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative;
+  bottom: 15px;
+  right: 30px;
+}
+
+.logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  position: absolute;
+  left: 1%;
+  top: 5px;
+  object-fit: cover;
+}

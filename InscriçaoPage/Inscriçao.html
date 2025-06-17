@@ -7,10 +7,10 @@
   <title>Assinatura com Pagamento</title>
 </head>
 <body>
-  <div class="perfil-container" onclick="window.location.href='../Perfil/perfil.html'">
-    <img id="fotoPerfil" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%">
-
-  </div>
+  <img src="../imagens/logoTCC.jpg" alt="logo" class="logo">
+<div class="perfil-container" onclick="window.location.href='../Perfil/perfil.html'">
+        <img id="fotoPerfil" alt="Foto de perfil">
+      </div>
 
   <img src="../imagens/logoTCC.jpg" alt="logo" class="logo">
 
@@ -66,7 +66,7 @@ window.onload = async () => {
     if (usuario.foto_url) {
       foto.src = `http://localhost:5000${usuario.foto_url}`;
     } else {
-      foto.src = 'default.png'; // imagem padrão se o usuário não tiver foto
+      foto.src = '../imagens/default.png'; // imagem padrão se o usuário não tiver foto
     }
   }
 };
