@@ -89,7 +89,7 @@ window.onload = async () => {
       const payload = {
         endereco: document.getElementById('endereco').value.trim(),
         dia: document.getElementById('dia').value,
-        metodo: metodo.value
+        metodo: document.getElementById('metodo').value
       };
 
       if (metodo.value === 'cartao') {

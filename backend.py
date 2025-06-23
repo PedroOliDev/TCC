@@ -77,10 +77,10 @@ def criar_assinatura():
 
         # Simulação do processo de pagamento
         if metodo == 'pix':
-            pagamento_ok = True  # suponha aprovação imediata
+            pagamento_ok = True  
             detalhe_pag = 'Via PIX'
         else:
-            pagamento_ok = True  # suponha aprovação
+            pagamento_ok = True
             detalhe_pag = f"Cartão final {cc.get('numero')[-4:]}"
 
         if not pagamento_ok:
@@ -90,10 +90,11 @@ def criar_assinatura():
         proximo = data_inicio + timedelta(days=30)
 
         cursor.execute("""
-            INSERT INTO assinaturas 
-              (id_usuario, data_inicio, status, proximo_pagamento, dia, endereco)
-            VALUES (%s, %s, 'ativa', %s, %s, %s)
-        """, (usuario_id, data_inicio, proximo, dia, endereco))
+    INSERT INTO assinaturas 
+      (id_usuario, data_inicio, status, proximo_pagamento, dia, endereco, metodo_pagamento, detalhe_pagamento)
+    VALUES (%s, %s, 'ativa', %s, %s, %s, %s, %s)
+""", (usuario_id, data_inicio, proximo, dia, endereco, metodo, detalhe_pag))
+
         conn.commit()
 
         return jsonify({
