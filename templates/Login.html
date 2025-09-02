@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/stylesIP.css">
+    
+    <script src="https://accounts.google.com/gsi/client" async></script>
+
+    <title>Página Inicial</title>
+</head>
+<body>
+    <script>
+        // Para funcionar o login com Google o site precisa estar em um Localhost
+        function handleCredentialResponse(response) {
+            console.log("Token recebido:", response.credential);
+            fetch('http://localhost:5000/register-google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: "include",
+                body: JSON.stringify({ token: response.credential }),
+            })
+            .then(async res => {
+                const result = await res.json();
+                if (res.ok) {
+                    window.location.href = '../templates/menu.html';  
+                } else {
+                    alert(result.message || "Erro no login com Google.");
+                }
+            })
+            .catch(error => {
+                console.error("Erro no login com Google:", error);
+                alert("Falha na autenticação com Google.");
+            });
+        }
+
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "844429812632-gi775pp6vfiqo2kbj5h0h9bam1u90pon.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: "outline", size: "large" }  
+            );
+            google.accounts.id.prompt(); 
+        }
+    </script>
+
+    <img src="../static/imagens/logoTCC.jpg" alt="logo" class="logo">
+
+    <div class="containerPrincipal">
+        <h1>Falta pouco para matar sua fome!</h1>
+        <p>Como deseja continuar?</p>
+        <div id="buttonDiv"></div>
+        <form id="loginForm">
+            <input type="text" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Senha">
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();  
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const data = { email, password };
+            
+            try {
+                const response = await fetch('http://localhost:5000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: "include",
+                    body: JSON.stringify(data)  
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    window.location.href = '../templates/menu.html'; 
+                } else {
+                    alert(result.message);  
+                }
+            } catch (error) {
+                console.error('Erro ao enviar os dados:', error);
+                alert('Erro ao comunicar com o servidor');
+            }
+        });
+    </script>
+</body>
+</html>

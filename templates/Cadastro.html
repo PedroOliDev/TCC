@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../static/stylesIP.css">
+
+  <script src="https://accounts.google.com/gsi/client" async></script>
+
+  <title>Cadastro - Food4You</title>
+</head>
+<body>
+  <img src="../static/imagens/logoTCC.jpg" alt="logo" class="logo">
+
+  <div class="containerPrincipal">
+    <h1>Falta pouco para matar sua fome!</h1>
+    <p>Como deseja continuar?</p>
+
+    <!-- Botão Google -->
+    <div id="buttonDiv"></div>
+
+    <!-- Cadastro manual -->
+    <form id="cadastroForm">
+      <input type="text" id="name" placeholder="Nome" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Senha" required>
+      <button type="submit">Criar Conta</button>
+    </form>
+
+    <p>Já tem conta? <a href="Login.html">Entrar</a></p>
+  </div>
+
+  <script>
+    // LOGIN GOOGLE
+    function handleCredentialResponse(response) {
+      console.log("Token recebido:", response.credential);
+      fetch("http://localhost:5000/register-google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ token: response.credential }),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.message.includes("sucesso")) {
+            window.location.href = "../templates/menu.html";
+          } else {
+            alert(result.message || "Erro no login com Google");
+          }
+        })
+        .catch((error) => {
+          console.error("Erro no login Google:", error);
+          alert("Falha na autenticação com Google.");
+        });
+    }
+
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: "844429812632-gi775pp6vfiqo2kbj5h0h9bam1u90pon.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large" }
+      );
+      google.accounts.id.prompt();
+    };
+
+    // CADASTRO NORMAL
+    document.getElementById("cadastroForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch("http://localhost:5000/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          window.location.href = "../templates/menu.html";
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        console.error("Erro ao enviar os dados:", error);
+        alert("Erro ao comunicar com o servidor");
+      }
+    });
+  </script>
+</body>
+</html>

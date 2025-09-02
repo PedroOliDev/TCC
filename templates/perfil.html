@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="perfil.css" />
+  <link rel="stylesheet" href="../static/perfil.css" />
   <title>Perfil do Usuário</title>
   
 </head>
@@ -26,29 +26,32 @@
 
   <script>
     // 🔄 Carrega perfil ao entrar na página
-    window.onload = () => {
-      fetch("http://localhost:5000/perfil", {
-        method: "GET",
-        credentials: "include"
-      })
-      .then(res => {
-        if (res.status === 401) {
-          alert("Você precisa estar logado.");
-          window.location.href = "C:\Users\CLAUDIO GUIMARAES\OneDrive\Documentos\TCC\TCC\PaginaInicial\Login.html";
-        }
-        return res.json();
-      })
-      .then(usuario => {
-        document.getElementById('nome').value = usuario.nome || '';
-        document.getElementById('email').value = usuario.email || '';
-  
-        if (usuario.foto_url) {
-          document.getElementById('fotoPreview').src = usuario.foto_url;
-        } else {
-          document.getElementById('fotoPreview').src = '../imagens/default.png'; 
-        }
-      });
-    };
+    const baseURL = "http://localhost:5000";
+
+window.onload = () => {
+  fetch(`${baseURL}/perfil`, {
+    method: "GET",
+    credentials: "include"
+  })
+  .then(res => {
+    if (res.status === 401) {
+      alert("Você precisa estar logado.");
+      window.location.href = `${baseURL}/login.html`; // redireciona via servidor
+    }
+    return res.json();
+  })
+  .then(usuario => {
+    document.getElementById('nome').value = usuario.nome || '';
+    document.getElementById('email').value = usuario.email || '';
+
+    if (usuario.foto_url) {
+      document.getElementById('fotoPreview').src = baseURL + usuario.foto_url;
+    } else {
+      document.getElementById('fotoPreview').src = baseURL + '/static/imagens/default.png';
+    }
+  });
+};
+
 
     // 💾 Envia dados atualizados
     function salvarPerfil() {

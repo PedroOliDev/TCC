@@ -1,27 +1,25 @@
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import mysql.connector
+from mysql.connector import Error
 from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
 from datetime import date, timedelta
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5500"}})
-app.secret_key = os.environ.get('SECRET_KEY', 'uma_chave_secreta_segura')
+app.secret_key = 'uma_chave_secreta_segura'
 
-#a senha esta a mostra pois é so um trabalho escolar, mas em um ambiente real deve ser protegida
+# 🔧 Conexão com MySQL
 def conectar():
-    return psycopg2.connect(
-        host=os.environ.get("DB_HOST", "food4you"),
-        user=os.environ.get("DB_USER" , "render "),
-        password=os.environ.get("DB_PASS", "21102110p"),
-        dbname=os.environ.get("DB_NAME", "food4you"),
-        cursor_factory=RealDictCursor
+    return mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='Senai@118',
+        database='food4you_db'
     )
 
-
+# ====================== ROTAS ======================
 
 @app.route('/perfil', methods=['GET'])
 def perfil():
@@ -32,7 +30,7 @@ def perfil():
 
     try:
         conn = conectar()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT nome, email, foto_url FROM usuarios WHERE id = %s", (usuario_id,))
         usuario = cursor.fetchone()
 
@@ -43,10 +41,12 @@ def perfil():
 
     except Exception as e:
         return jsonify({'message': f'Erro ao buscar perfil: {str(e)}'}), 500
+
     finally:
-        if conn:
+        if conn.is_connected():
             cursor.close()
             conn.close()
+
 
 @app.route('/assinatura', methods=['POST'])
 def criar_assinatura():
@@ -71,16 +71,10 @@ def criar_assinatura():
         conn = conectar()
         cursor = conn.cursor()
 
-        
         if metodo == 'pix':
-            pagamento_ok = True  
             detalhe_pag = 'Via PIX'
         else:
-            pagamento_ok = True
             detalhe_pag = f"Cartão final {cc.get('numero')[-4:]}"
-
-        if not pagamento_ok:
-            return jsonify({'message': 'Pagamento recusado'}), 402
 
         data_inicio = date.today()
         proximo = data_inicio + timedelta(days=30)
@@ -105,12 +99,13 @@ def criar_assinatura():
             }
         }), 200
 
-    except Exception as e:
+    except Error as e:
         return jsonify({'message': f'Erro ao criar assinatura: {str(e)}'}), 500
     finally:
-        if conn:
+        if conn.is_connected():
             cursor.close()
             conn.close()
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -124,29 +119,39 @@ def register():
 
     try:
         conn = conectar()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
         cursor.execute(
             'INSERT INTO usuarios (nome, email, senha, foto_url) VALUES (%s, %s, %s, NULL)', 
             (nome, email, senha)
         )
         conn.commit()
+        usuario_id = cursor.lastrowid  # pega o ID do usuário recém-criado
 
-        cursor.execute('SELECT * FROM usuarios WHERE email = %s AND nome = %s', (email, nome))
-        usuario = cursor.fetchone()
+        # Armazena dados na sessão
+        session['usuario_id'] = usuario_id
+        session['usuario_nome'] = nome
+        session['usuario_email'] = email
 
-        session['usuario_id'] = usuario['id']
-        session['usuario_nome'] = usuario['nome']
-        session['usuario_email'] = usuario['email']
+        usuario = {
+            'id': usuario_id,
+            'nome': nome,
+            'email': email,
+            'foto_url': None
+        }
 
         return jsonify({'message': 'Usuário cadastrado com sucesso!', 'usuario': usuario}), 201
 
-    except Exception as e:
+    except Error as e:
+        if e.errno == 1062:
+            return jsonify({'message': 'Usuário já existe, vá para página de entrada.'}), 409
         return jsonify({'message': f'Erro no servidor: {str(e)}'}), 500
+
     finally:
-        if conn:
+        if conn.is_connected():
             cursor.close()
             conn.close()
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -156,7 +161,7 @@ def login():
 
     try:
         conn = conectar()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.execute('SELECT * FROM usuarios WHERE email = %s AND senha = %s', (email, senha))
         usuario = cursor.fetchone()
 
@@ -168,17 +173,13 @@ def login():
         else:
             return jsonify({'message': 'Email ou senha inválidos'}), 401
 
-    except Exception as e:
-        return jsonify({'message': f'Erro no servidor: {str(e)}'}), 500
+    except Error as e:
+        return jsonify({'message': 'Erro no servidor'}), 500
     finally:
-        if conn:
+        if conn.is_connected():
             cursor.close()
             conn.close()
 
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.clear()
-    return jsonify({'message': 'Logout realizado com sucesso'}), 200
 
 
 @app.route('/register-google', methods=['POST'])
@@ -193,14 +194,14 @@ def register_google():
         idinfo = id_token.verify_oauth2_token(
             token,
             grequests.Request(),
-            "SEU_CLIENT_ID_DO_GOOGLE"
+            "844429812632-gi775pp6vfiqo2kbj5h0h9bam1u90pon.apps.googleusercontent.com"
         )
 
         email = idinfo.get('email')
-        nome = idinfo.get('name')  
+        nome = idinfo.get('name')
 
         conn = conectar()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.execute('SELECT * FROM usuarios WHERE email = %s', (email,))
         usuario = cursor.fetchone()
 
@@ -208,25 +209,95 @@ def register_google():
             session['usuario_id'] = usuario['id']
             session['usuario_nome'] = usuario['nome']
             session['usuario_email'] = usuario['email']
-            return jsonify({'message': 'Login com Google bem-sucedido!', 'usuario': usuario}), 200
+            return jsonify({'message': 'Login com Google feito com sucesso!', 'usuario': usuario}), 200
         else:
             cursor.execute('INSERT INTO usuarios (nome, email, senha) VALUES (%s, %s, %s)', (nome, email, 'GOOGLE'))
             conn.commit()
-            cursor.execute('SELECT * FROM usuarios WHERE email = %s AND nome = %s', (email, nome))
-            usuario = cursor.fetchone()
-            session['usuario_id'] = usuario['id']
-            session['usuario_nome'] = usuario['nome']
-            session['usuario_email'] = usuario['email']
+            usuario_id = cursor.lastrowid
+            usuario = {
+                'id': usuario_id,
+                'nome': nome,
+                'email': email,
+                'foto_url': None
+            }
+            session['usuario_id'] = usuario_id
+            session['usuario_nome'] = nome
+            session['usuario_email'] = email
             return jsonify({'message': 'Usuário Google cadastrado e logado com sucesso!', 'usuario': usuario}), 201
 
-    except Exception as e:
-        return jsonify({'message': f'Erro no servidor: {str(e)}'}), 500
+    except ValueError:
+        return jsonify({'message': 'Token inválido'}), 401
+    except Error as e:
+        return jsonify({'message': 'Erro no servidor'}), 500
     finally:
-        if 'conn' in locals() and conn:
+        if 'conn' in locals() and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+import os
+
+@app.route('/atualizar-perfil', methods=['POST'])
+def atualizar_perfil():
+    if 'usuario_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
+
+    usuario_id = session['usuario_id']
+    nome = request.form.get('nome')
+    senha = request.form.get('senha')
+    foto = request.files.get('foto')
+
+    try:
+        conn = conectar()
+        cursor = conn.cursor()
+
+        foto_url = None
+        if foto:
+            # Garante que a pasta existe dentro do projeto
+            pasta_fotos = os.path.join(app.root_path, 'static', 'fotos')
+            if not os.path.exists(pasta_fotos):
+                os.makedirs(pasta_fotos)
+
+            # Mantém a extensão original da foto
+            extensao = os.path.splitext(foto.filename)[1]
+            caminho_foto = os.path.join(pasta_fotos, f'{usuario_id}{extensao}')
+            foto.save(caminho_foto)
+
+            # URL que o navegador consegue acessar via Flask
+            foto_url = f'/static/fotos/{usuario_id}{extensao}'
+
+        # Atualiza dados no banco
+        query = "UPDATE usuarios SET nome=%s, senha=%s"
+        valores = [nome, senha]
+        if foto_url:
+            query += ", foto_url=%s"
+            valores.append(foto_url)
+        query += " WHERE id=%s"
+        valores.append(usuario_id)
+
+        cursor.execute(query, valores)
+        conn.commit()
+
+        # Atualiza sessão
+        session['usuario_nome'] = nome
+        if foto_url:
+            session['usuario_foto'] = foto_url
+
+        return jsonify({'message': 'Perfil atualizado com sucesso', 'foto_url': foto_url}), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Erro ao atualizar perfil: {str(e)}'}), 500
+
+    finally:
+        if conn.is_connected():
             cursor.close()
             conn.close()
 
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'message': 'Logout realizado com sucesso'}), 200
+
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)

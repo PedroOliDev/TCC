@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <link rel="stylesheet" href="assinatura.css">
+  <link rel="stylesheet" href="../static/assinatura.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Assinatura com Pagamento</title>
 </head>
 <body>
-  <img src="../imagens/logoTCC.jpg" alt="logo" class="logo">
-<div class="perfil-container" onclick="window.location.href='../Perfil/perfil.html'">
-        <img id="fotoPerfil" alt="Foto de perfil">
-      </div>
+  <img src="../static/imagens/logoTCC.jpg" alt="logo" class="logo">
 
-  <img src="../imagens/logoTCC.jpg" alt="logo" class="logo">
+  <div class="perfil-container" onclick="window.location.href='../templates/perfil.html'">
+    <img id="fotoPerfil" alt="Foto de perfil">
+  </div>
 
   <div class="container">
     <form onsubmit="return false;">
@@ -53,25 +52,22 @@
   </div>
 
   <script>
+    window.onload = async () => {
+      const res = await fetch("http://localhost:5000/perfil", {
+        credentials: "include"
+      });
 
-window.onload = async () => {
-  const res = await fetch("http://localhost:5000/perfil", {
-    credentials: "include"
-  });
+      if (res.ok) {
+        const usuario = await res.json();
+        const foto = document.getElementById("fotoPerfil");
 
-  if (res.ok) {
-    const usuario = await res.json();
-    const foto = document.getElementById("fotoPerfil");
-
-    if (usuario.foto_url) {
-      foto.src = `http://localhost:5000${usuario.foto_url}`;
-    } else {
-      foto.src = '../imagens/default.png'; // imagem padrão se o usuário não tiver foto
-    }
-  }
-};
-
-
+        if (usuario.foto_url) {
+          foto.src = `http://localhost:5000${usuario.foto_url}`;
+        } else {
+          foto.src = '../static/imagens/default.png';
+        }
+      }
+    };
 
     const metodo = document.getElementById('metodo');
     const detalhes = document.getElementById('detalhes-cartao');
@@ -99,11 +95,9 @@ window.onload = async () => {
           cvv: document.getElementById('cc_cvv').value.trim()
         };
       } else if (metodo.value === 'pix') {
-      
         baixarPDF();
       }
 
-      // Envia os dados da assinatura
       fetch('http://localhost:5000/assinatura', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -124,7 +118,7 @@ window.onload = async () => {
 
     function baixarPDF() {
       const link = document.createElement('a');
-      link.href = '../InscriçaoPage/pagamento_pdf.pdf'; 
+      link.href = '../templates/pagamento_pdf.pdf'; 
       link.download = 'PagamentoPIX.pdf';
       document.body.appendChild(link);
       link.click();

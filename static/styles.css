@@ -5,7 +5,7 @@ body {
     padding: 20px;
     display: flex;
     justify-content: center;
-    background-image: url('../PaginaDeEntrada/backgroundTCC.jpg');
+    background-image: url('../static/imagens/backgroundTCC.jpg');
     background-size: cover;      
   background-repeat: no-repeat; 
   background-position: center;
