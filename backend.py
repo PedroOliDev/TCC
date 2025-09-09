@@ -5,6 +5,7 @@ from mysql.connector import Error
 from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
 from datetime import date, timedelta
+import os
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5500"}})
@@ -234,7 +235,7 @@ def register_google():
             cursor.close()
             conn.close()
 
-import os
+
 
 @app.route('/atualizar-perfil', methods=['POST'])
 def atualizar_perfil():
