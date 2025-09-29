@@ -1,5 +1,5 @@
  body {
-      background-color: rgb(0, 0, 0);
+      background-color: rgb(255, 255, 255);
       color: white;
       font-family: Arial, sans-serif;
       padding: 20px;
@@ -10,8 +10,8 @@
     .payment-details {display:none; margin-top:10px;}
 
     .logo {
-  width: 70px;
-  height: 70px;
+  width: 20vh;
+  height: 20vh;
   border-radius: 50%;
   margin-bottom: 20px;
   position: absolute;
@@ -37,7 +37,7 @@ h2 {
       border: 2px solid #fff;
       animation: mudar-cor 4s infinite;
       border-radius: 15px;
-      background-color: #f73636;
+      background-color: #f73636db;
     }
 
     @keyframes mudar-cor {
@@ -55,15 +55,13 @@ h2 {
     border-radius: 100px;
     font-size: 16px;
     font-weight: bold;
-    color: #333;
+    color: #0a0a0a;
     cursor: pointer;
     transition: background-color 0.3s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
   }
   
-  .perfil-container:hover {
-   
-  }
+  
   
   .perfil-texto {
     font-size: 16px;
@@ -97,15 +95,15 @@ h2 {
       width: 50vh;
       padding: 12px;
       font-size: 18px;
-      background-color: #222;
-      color: white;
+      background-color: #ffffffa4;
+      color: rgba(0, 0, 0, 0.725);
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: #444;
+      background-color: #ffffff;
     }
 
     .mensagem {
@@ -117,16 +115,15 @@ h2 {
     #fotoPerfil {
   width: 70px;
   height: 70px;
-  border-radius: 50%;
+  border-radius: 5%;
   object-fit: cover;
   position: relative;
-  bottom: 15px;
   right: 30px;
 }
 
 .logo {
-  width: 70px;
-  height: 70px;
+  width: 10rem;
+  height: 10rem;
   border-radius: 50%;
   position: absolute;
   left: 1%;

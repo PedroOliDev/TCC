@@ -1,81 +1,321 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast4You - Menu de Delivery</title>
     <link rel="stylesheet" href="../static/menu.css">
-    <title>Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-     <div class="navbar">
-    <img src="../static/imagens/logoTCC.jpg" alt="logo" class="logo">
-<div class="perfil-container" onclick="window.location.href='../templates/perfil.html'">
-        <img id="fotoPerfil" alt="Foto de perfil">
-      </div>
-    <div class="nav-links">
-      <a href="../templates/Index.html">Início</a>
-      <a href="../templates/menu.html">Menu</a>
-      <a href="../templates/Inscriçao.html">Inscrição</a>
-    </div>
+     
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="../static/imagens/logoTCC.jpg" alt="logo">
+                    </div>
+                    
+                    <div class="logo-text">
+                        <h1>Fast4You</h1>
+                        <div class="location">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>Entregar em Casa</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="filter-btn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+                    </svg>
+                    Filtros
+                </button>
+                
+                
+            </div>
+               <div class="perfil-container" onclick="window.location.href='../templates/perfil.html'">
+                 <img id="fotoPerfil" src="../static/imagens/default.png" alt="Foto de perfil">
+                </div>
+             
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Busque por pratos ou restaurantes..."
+                    class="search-input"
+                >
+            </div>
 
-    <div class="search-bar">
-      <input type="text" placeholder="Pesquisar...">
-    </div>
-  </div>
-    
-    <div class="Menus">
-        <div class="item" onclick="window.location.href='../templates/Lanches.html'">
-    <div class="lanches" >
-        <img class="foodimg" src="../static/imagens/Lanches.jpg" alt="lanches">
-        <h1>Lanches</h1>
+            
+        </div>
+
         
-    </div>
-</div>
-<div class="item">
-    <div class="pizzas" onclick="window.location.href='../templates/Pizza.html'">
-        <img class="foodimg"  src="../static/imagens/Pizza.jpg" alt="pizzas">
-        <h1>Pizzas</h1>
-    </div>
-</div>
-<div class="item">
+    </header>
+    
+     
+    <main class="main">
+        <div class="container">
+             
+            <div class="categories-grid" id="categoriesGrid">
+                 
+            </div>
 
-    <div class="doces">
-        <img class="foodimg" src="../static/imagens/Doces.jpg" alt="doces">
-        <h1>Doces</h1>
-    </div>
-</div>
-<div class="item">
+             
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <h3>Nenhum resultado encontrado</h3>
+                <p>Tente buscar por outros termos ou explore nossas categorias disponíveis.</p>
+            </div>
+        </div>
+    </main>
 
-    <div class="salgados">
-        <img class="foodimg" src="../static/imagens/Salgados.jpg" alt="salgados">
-        <h1>Salgados</h1>
-    </div>
-</div>
-<div class="item">
-    <div class="japonesa">
-        <img class="foodimg" src="../static/imagens/Japa.jpg" alt="japa">
-        <h1>Japonesa</h1>
-    </div>
-</div>
-</div>
-<script>
-    window.onload = async () => {
-  const res = await fetch("http://localhost:5000/perfil", {
-    credentials: "include"
-  });
+    <script>
+        // Set default image immediately
+        document.getElementById("fotoPerfil").src = '../static/imagens/default.png';
+        
+        // Load profile data with better error handling
+        async function loadProfileData() {
+            try {
+                const res = await fetch("http://localhost:5000/perfil", {
+                    credentials: "include",
+                    mode: 'cors'
+                });
 
-  if (res.ok) {
-    const usuario = await res.json();
-    const foto = document.getElementById("fotoPerfil");
+                if (res.ok) {
+                    const usuario = await res.json();
+                    const foto = document.getElementById("fotoPerfil");
 
-    if (usuario.foto_url) {
-      foto.src = `http://localhost:5000${usuario.foto_url}`;
-    } else {
-      foto.src = '../static/imagens/default.png'; // imagem padrão se o usuário não tiver foto
-    }
-  }
-};
-</script>
+                    if (usuario.foto_url) {
+                        // Ensure the URL is properly formatted
+                        const imageUrl = usuario.foto_url.startsWith('/') 
+                            ? `http://localhost:5000${usuario.foto_url}`
+                            : usuario.foto_url;
+                        foto.src = imageUrl;
+                        
+                        // Add error handler for the image itself
+                        foto.onerror = function() {
+                            this.src = '../static/imagens/default.png';
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do perfil:', error);
+                // Keep default image if there's any error
+                document.getElementById("fotoPerfil").src = '../static/imagens/default.png';
+            }
+        }
 
+        // Load profile when DOM is ready
+        document.addEventListener("DOMContentLoaded", () => {
+            loadProfileData();
+            renderCategories(foodCategories);
+        });
+      
+        const foodCategories = [
+          {
+            id: "lanches",
+            name: "Lanches",
+            image: "../static/imagens/Lanches.jpg",
+            description: "Hambúrguers, sanduíches e muito mais",
+            deliveryTime: "20-30 min",
+            rating: 4.8,
+            tags: ["Popular", "Rápido"],
+          },
+          {
+            id: "pizzas",
+            name: "Pizzas",
+            image: "../static/imagens/Pizza.jpg",
+            description: "Pizzas tradicionais e gourmet",
+            deliveryTime: "25-35 min",
+            rating: 4.9,
+            tags: ["Favorito", "Família"],
+          },
+          {
+            id: "japonesa",
+            name: "Japonesa",
+            image: "../static/imagens/Japa.jpg",
+            description: "Sushi, sashimi e pratos orientais",
+            deliveryTime: "30-40 min",
+            rating: 4.7,
+            tags: ["Premium", "Saudável"],
+          },
+          {
+            id: "italiana",
+            name: "Italiana",
+            image: "../static/imagens/Italiana.jpg",
+            description: "Massas, risotos e pratos italianos",
+            deliveryTime: "25-35 min",
+            rating: 4.6,
+            tags: ["Tradicional"],
+          },
+          {
+            id: "brasileira",
+            name: "Brasileira",
+            image: "../static/imagens/Brasileira.jpg",
+            description: "Pratos típicos da culinária brasileira",
+            deliveryTime: "30-45 min",
+            rating: 4.8,
+            tags: ["Caseiro", "Tradicional"],
+          },
+          {
+            id: "doces",
+            name: "Doces",
+            image: "../static/imagens/Doces.jpg",
+            description: "Sobremesas, bolos e doces artesanais",
+            deliveryTime: "15-25 min",
+            rating: 4.9,
+            tags: ["Sobremesa", "Artesanal"],
+          },
+          {
+            id: "salgados",
+            name: "Salgados",
+            image: "../static/imagens/Salgados.jpg",
+            description: "Coxinhas, pastéis e salgados fritos",
+            deliveryTime: "15-25 min",
+            rating: 4.5,
+            tags: ["Lanche", "Rápido"],
+          },
+          {
+            id: "vegetariana",
+            name: "Vegetariana",
+            image: "colorful-vegetarian-bowl-with-quinoa.jpg",
+            description: "Opções vegetarianas e veganas",
+            deliveryTime: "20-30 min",
+            rating: 4.7,
+            tags: ["Saudável", "Vegano"],
+          },
+          {
+            id: "mexicana",
+            name: "Mexicana",
+            image: "tacos-with-guacamole-and-salsa.jpg",
+            description: "Tacos, burritos e comida mexicana",
+            deliveryTime: "25-35 min",
+            rating: 4.6,
+            tags: ["Picante", "Exótico"],
+          },
+        ]
+
+        // DOM elements
+        const searchInput = document.getElementById("searchInput")
+        const categoriesGrid = document.getElementById("categoriesGrid")
+        const emptyState = document.getElementById("emptyState")
+
+        // State
+        let filteredCategories = [...foodCategories]
+
+        // Create category card HTML
+        function createCategoryCard(category) {
+          return `
+                <div class="category-card" data-category="${category.id}">
+                    <div class="card-image-container">
+                        <img 
+                            src="${category.image}" 
+                            alt="${category.name}"
+                            class="card-image"
+                            onerror="this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(category.name)}'"
+                        >
+                        <div class="card-rating">
+                            <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <span>${category.rating}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">${category.name}</h3>
+                            <div class="card-time">
+                                <svg class="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12,6 12,12 16,14"></polyline>
+                                </svg>
+                                <span>${category.deliveryTime}</span>
+                            </div>
+                        </div>
+                        
+                        <p class="card-description">${category.description}</p>
+                        
+                        <div class="card-tags">
+                            ${category.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+
+        // Render categories
+        function renderCategories(categories) {
+          if (categories.length === 0) {
+            categoriesGrid.style.display = "none"
+            emptyState.style.display = "block"
+          } else {
+            categoriesGrid.style.display = "grid"
+            emptyState.style.display = "none"
+            categoriesGrid.innerHTML = categories.map(createCategoryCard).join("")
+
+            // Add click event listeners to cards
+            document.querySelectorAll(".category-card").forEach((card) => {
+              card.addEventListener("click", () => {
+                const categoryId = card.dataset.category
+                console.log(`Categoria selecionada: ${categoryId}`)
+                window.location.href = `produtos.html?categoria=${categoryId}`
+              })
+            })
+          }
+        }
+
+        // Filter categories based on search term
+        function filterCategories(searchTerm) {
+          const term = searchTerm.toLowerCase().trim()
+
+          if (!term) {
+            filteredCategories = [...foodCategories]
+          } else {
+            filteredCategories = foodCategories.filter(
+              (category) =>
+                category.name.toLowerCase().includes(term) ||
+                category.description.toLowerCase().includes(term) ||
+                category.tags.some((tag) => tag.toLowerCase().includes(term)),
+            )
+          }
+
+          renderCategories(filteredCategories)
+        }
+
+        // Search input event listener
+        if (searchInput) {
+            searchInput.addEventListener("input", (e) => {
+              filterCategories(e.target.value)
+            })
+        }
+
+        // Add some smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", function (e) {
+            e.preventDefault()
+            const target = document.querySelector(this.getAttribute("href"))
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              })
+            }
+          })
+        })
+    </script>
 </body>
 </html>

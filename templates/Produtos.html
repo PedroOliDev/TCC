@@ -1,0 +1,607 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurantes - Fast4you</title>
+    <link rel="stylesheet" href="../static/Produto.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+     
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="../static/imagens/logoTCC.jpg" alt="logo">
+                    </div>
+                    <div class="logo-text">
+                        <h1>Fast4You</h1>
+                        <div class="location">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>Entregar em Casa</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="window.location.href='menu.html'">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    Voltar
+                </button>
+                  
+
+          
+
+             
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Busque por restaurantes..."
+                    class="search-input"
+                >
+            </div>
+
+            <div class="perfil-container" onclick="window.location.href='../templates/perfil.html'">
+            <img id="fotoPerfil" src="../static/imagens/default.png" alt="Foto de perfil">
+              </div>
+            
+            </div>
+        </div>
+        
+        
+     
+    </header>
+
+     
+    <section class="category-header">
+        <div class="container">
+            <div class="category-info">
+                <img id="categoryImage" src="/placeholder.svg" alt="" class="category-image">
+                <div class="category-details">
+                    <h1 id="categoryTitle">Carregando...</h1>
+                    <p id="categoryDescription">Carregando descrição...</p>
+                    <div class="category-stats">
+                        <span id="restaurantCount">0 restaurantes</span>
+                        <span class="separator">•</span>
+                        <span>Entrega grátis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="rating">Mais Avaliados</button>
+                <button class="filter-btn" data-filter="delivery">Entrega Rápida</button>
+                <button class="filter-btn" data-filter="promotion">Promoções</button>
+            </div>
+        </div>
+    </section>
+
+     
+    <main class="main">
+        <div class="container">
+             
+            <div class="restaurants-grid" id="restaurantsGrid">
+                  
+            </div>
+
+             
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <h3>Nenhum restaurante encontrado</h3>
+                <p>Tente buscar por outros termos ou explore outras categorias.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Set default image immediately
+        document.getElementById("fotoPerfil").src = '../static/imagens/default.png';
+        
+        // Load profile data with better error handling
+        async function loadProfileData() {
+            try {
+                const res = await fetch("http://localhost:5000/perfil", {
+                    credentials: "include",
+                    mode: 'cors'
+                });
+
+                if (res.ok) {
+                    const usuario = await res.json();
+                    const foto = document.getElementById("fotoPerfil");
+
+                    if (usuario.foto_url) {
+                        // Ensure the URL is properly formatted
+                        const imageUrl = usuario.foto_url.startsWith('/') 
+                            ? `http://localhost:5000${usuario.foto_url}`
+                            : usuario.foto_url;
+                        foto.src = imageUrl;
+                        
+                        // Add error handler for the image itself
+                        foto.onerror = function() {
+                            this.src = '../static/imagens/default.png';
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do perfil:', error);
+                // Keep default image if there's any error
+                document.getElementById("fotoPerfil").src = '../static/imagens/default.png';
+            }
+        }
+
+      // Restaurant data by category
+const restaurantData = {
+  lanches: [
+    {
+      id: 1,
+      name: "Burger King",
+      cuisine: "Fast Food",
+      image: "../static/imagens/BK.png",
+      rating: 4.5,
+      deliveryTime: "20-30 min",
+      deliveryFee: "Grátis",
+      tags: ["Promoção", "Popular"],
+      badge: "Oferta",
+    },
+    {
+      id: 2,
+      name: "McDonald's",
+      cuisine: "Fast Food",
+      image: "../static/imagens/Mc.png",
+      rating: 4.3,
+      deliveryTime: "25-35 min",
+      deliveryFee: "R$ 3,99",
+      tags: ["Rápido", "Família"],
+      badge: null,
+    },
+    {
+      id: 3,
+      name: "Subway",
+      cuisine: "Sanduíches",
+      image: "../static/imagens/Subway.jpg",
+      rating: 4.4,
+      deliveryTime: "15-25 min",
+      deliveryFee: "Grátis",
+      tags: ["Saudável", "Rápido"],
+      badge: "Novo",
+    },
+    {
+      id: 4,
+      name: "Outback Steakhouse",
+      cuisine: "Hambúrguers Gourmet",
+      image: "../static/imagens/Outback.jpg",
+      rating: 4.7,
+      deliveryTime: "35-45 min",
+      deliveryFee: "R$ 5,99",
+      tags: ["Premium", "Gourmet"],
+      badge: null,
+    },
+  ],
+  pizzas: [
+    {
+      id: 5,
+      name: "Domino's Pizza",
+      cuisine: "Pizzaria",
+      image: "../static/imagens/Dominos.jpg",
+      rating: 4.6,
+      deliveryTime: "25-35 min",
+      deliveryFee: "Grátis",
+      tags: ["Promoção", "Família"],
+      badge: "Oferta",
+    },
+    {
+      id: 6,
+      name: "Pizza Hut",
+      cuisine: "Pizzaria",
+      image: "../static/imagens/pizzahut.png",
+      rating: 4.4,
+      deliveryTime: "30-40 min",
+      deliveryFee: "R$ 4,99",
+      tags: ["Tradicional", "Família"],
+      badge: null,
+    },
+    {
+      id: 7,
+      name: "Donatellos Pizzaria",
+      cuisine: "Pizza Artesanal",
+      image: "../static/imagens/donatellos.jpg",
+      rating: 4.8,
+      deliveryTime: "35-45 min",
+      deliveryFee: "R$ 6,99",
+      tags: ["Artesanal", "Premium"],
+      badge: null,
+    },
+    {
+      id: 8,
+      name: "Pizzaria do Bairro",
+      cuisine: "Pizza Tradicional",
+      image: "../static/imagens/Pizarria.jpg",
+      rating: 4.2,
+      deliveryTime: "20-30 min",
+      deliveryFee: "Grátis",
+      tags: ["Caseiro", "Barato"],
+      badge: "Popular",
+    },
+  ],
+  japonesa: [
+    {
+      id: 9,
+      name: "Sushi Leblon",
+      cuisine: "Japonesa",
+      image: "fresh-sushi-and-sashimi-platter.jpg",
+      rating: 4.9,
+      deliveryTime: "40-50 min",
+      deliveryFee: "R$ 7,99",
+      tags: ["Premium", "Fresco"],
+      badge: null,
+    },
+    {
+      id: 10,
+      name: "Temakeria Makoto",
+      cuisine: "Temakeria",
+      image: "fresh-sushi-and-sashimi-platter.jpg",
+      rating: 4.7,
+      deliveryTime: "30-40 min",
+      deliveryFee: "Grátis",
+      tags: ["Rápido", "Qualidade"],
+      badge: "Oferta",
+    },
+  ],
+  italiana: [
+    {
+      id: 11,
+      name: "Pasta & Basta",
+      cuisine: "Italiana",
+      image: "pasta-carbonara-with-parmesan-cheese.jpg",
+      rating: 4.6,
+      deliveryTime: "25-35 min",
+      deliveryFee: "R$ 4,99",
+      tags: ["Tradicional", "Caseiro"],
+      badge: null,
+    },
+    {
+      id: 12,
+      name: "Nonna Mia",
+      cuisine: "Italiana Autêntica",
+      image: "pasta-carbonara-with-parmesan-cheese.jpg",
+      rating: 4.8,
+      deliveryTime: "30-40 min",
+      deliveryFee: "R$ 5,99",
+      tags: ["Autêntico", "Premium"],
+      badge: "Novo",
+    },
+  ],
+  brasileira: [
+    {
+      id: 13,
+      name: "Casa da Feijoada",
+      cuisine: "Brasileira",
+      image: "feijoada-with-rice-and-orange-slices.jpg",
+      rating: 4.7,
+      deliveryTime: "35-45 min",
+      deliveryFee: "Grátis",
+      tags: ["Tradicional", "Caseiro"],
+      badge: "Popular",
+    },
+    {
+      id: 14,
+      name: "Boteco do Manoel",
+      cuisine: "Comida Caseira",
+      image: "feijoada-with-rice-and-orange-slices.jpg",
+      rating: 4.5,
+      deliveryTime: "30-40 min",
+      deliveryFee: "R$ 3,99",
+      tags: ["Caseiro", "Barato"],
+      badge: null,
+    },
+  ],
+  doces: [
+    {
+      id: 15,
+      name: "Confeitaria Colombo",
+      cuisine: "Confeitaria",
+      image: "chocolate-cake-strawberries.png",
+      rating: 4.8,
+      deliveryTime: "20-30 min",
+      deliveryFee: "R$ 4,99",
+      tags: ["Artesanal", "Tradicional"],
+      badge: null,
+    },
+    {
+      id: 16,
+      name: "Doce Vida",
+      cuisine: "Doces & Bolos",
+      image: "chocolate-cake-strawberries.png",
+      rating: 4.6,
+      deliveryTime: "15-25 min",
+      deliveryFee: "Grátis",
+      tags: ["Caseiro", "Promoção"],
+      badge: "Oferta",
+    },
+  ],
+  salgados: [
+    {
+      id: 17,
+      name: "Salgaderia da Esquina",
+      cuisine: "Salgados",
+      image: "brazilian-coxinha-and-pastels.jpg",
+      rating: 4.4,
+      deliveryTime: "15-25 min",
+      deliveryFee: "Grátis",
+      tags: ["Rápido", "Barato"],
+      badge: "Popular",
+    },
+    {
+      id: 18,
+      name: "Casa do Pastel",
+      cuisine: "Pastéis & Salgados",
+      image: "brazilian-coxinha-and-pastels.jpg",
+      rating: 4.3,
+      deliveryTime: "20-30 min",
+      deliveryFee: "R$ 2,99",
+      tags: ["Tradicional", "Caseiro"],
+      badge: null,
+    },
+  ],
+}
+
+// Category information
+const categoryInfo = {
+  lanches: {
+    name: "Lanches",
+    description: "Hambúrguers, sanduíches e fast food",
+    image: "../static/imagens/Lanches.jpg",
+  },
+  pizzas: {
+    name: "Pizzas",
+    description: "Pizzas tradicionais e gourmet",
+    image: "../static/imagens/Pizza.jpg",
+  },
+  japonesa: {
+    name: "Japonesa",
+    description: "Sushi, sashimi e pratos orientais",
+    image: "../static/imagens/Japa.jpg",
+  },
+  italiana: {
+    name: "Italiana",
+    description: "Massas, risotos e pratos italianos",
+    image: "../static/imagens/Italiana.jpg",
+  },
+  brasileira: {
+    name: "Brasileira",
+    description: "Pratos típicos da culinária brasileira",
+    image: "../static/imagens/Brasileira.jpg",
+  },
+  doces: {
+    name: "Doces",
+    description: "Sobremesas, bolos e doces artesanais",
+    image: "../static/imagens/Doces.jpg",
+  },
+  salgados: {
+    name: "Salgados",
+    description: "Coxinhas, pastéis e salgados fritos",
+    image: "../static/imagens/Salgados.jpg",
+  },
+}
+
+// DOM elements
+const searchInput = document.getElementById("searchInput")
+const restaurantsGrid = document.getElementById("restaurantsGrid")
+const emptyState = document.getElementById("emptyState")
+const categoryTitle = document.getElementById("categoryTitle")
+const categoryDescription = document.getElementById("categoryDescription")
+const categoryImage = document.getElementById("categoryImage")
+const restaurantCount = document.getElementById("restaurantCount")
+
+// State
+let currentCategory = "lanches"
+let currentRestaurants = []
+let filteredRestaurants = []
+
+// Get category from URL parameters
+function getCategoryFromURL() {
+  const urlParams = new URLSearchParams(window.location.search)
+  return urlParams.get("categoria") || "lanches"
+}
+
+// Create restaurant card HTML
+function createRestaurantCard(restaurant) {
+  return `
+    <div class="restaurant-card" data-restaurant="${restaurant.id}">
+      <div class="card-image-container">
+        <img 
+          src="${restaurant.image}" 
+          alt="${restaurant.name}"
+          class="card-image"
+          onerror="this.src='https://via.placeholder.com/400x200?text=${encodeURIComponent(restaurant.name)}'"
+        >
+        ${restaurant.badge ? `<div class="card-badge">${restaurant.badge}</div>` : ""}
+        <div class="card-rating">
+          <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span>${restaurant.rating}</span>
+        </div>
+      </div>
+      
+      <div class="card-content">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">${restaurant.name}</h3>
+            <p class="card-cuisine">${restaurant.cuisine}</p>
+          </div>
+        </div>
+        
+        <div class="card-delivery-info">
+          <div class="delivery-time">
+            <svg class="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12,6 12,12 16,14"></polyline>
+            </svg>
+            <span>${restaurant.deliveryTime}</span>
+          </div>
+          <div class="delivery-fee">
+            <svg class="truck-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="3" width="15" height="13"></rect>
+              <polygon points="16,8 20,8 23,11 23,16 16,16"></polygon>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+            <span>${restaurant.deliveryFee}</span>
+          </div>
+        </div>
+        
+        <div class="card-tags">
+          ${restaurant.tags
+            .map(
+              (tag) => `
+            <span class="tag ${tag.toLowerCase() === "promoção" ? "promotion" : ""}">${tag}</span>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+    </div>
+  `
+}
+
+// Render restaurants
+function renderRestaurants(restaurants) {
+  if (restaurants.length === 0) {
+    restaurantsGrid.style.display = "none"
+    emptyState.style.display = "block"
+  } else {
+    restaurantsGrid.style.display = "grid"
+    emptyState.style.display = "none"
+    restaurantsGrid.innerHTML = restaurants.map(createRestaurantCard).join("")
+
+    // Add click event listeners to cards
+    document.querySelectorAll(".restaurant-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const restaurantId = card.dataset.restaurant
+        window.location.href = `planos.html?restaurante=${restaurantId}`
+      })
+    })
+  }
+}
+
+// Filter restaurants based on search term
+function filterRestaurants(searchTerm) {
+  const term = searchTerm.toLowerCase().trim()
+
+  if (!term) {
+    filteredRestaurants = [...currentRestaurants]
+  } else {
+    filteredRestaurants = currentRestaurants.filter(
+      (restaurant) =>
+        restaurant.name.toLowerCase().includes(term) ||
+        restaurant.cuisine.toLowerCase().includes(term) ||
+        restaurant.tags.some((tag) => tag.toLowerCase().includes(term)),
+    )
+  }
+
+  renderRestaurants(filteredRestaurants)
+}
+
+// Apply filter
+function applyFilter(filterType) {
+  let sortedRestaurants = [...currentRestaurants]
+
+  switch (filterType) {
+    case "rating":
+      sortedRestaurants.sort((a, b) => b.rating - a.rating)
+      break
+    case "delivery":
+      sortedRestaurants.sort((a, b) => {
+        const timeA = Number.parseInt(a.deliveryTime.split("-")[0])
+        const timeB = Number.parseInt(b.deliveryTime.split("-")[0])
+        return timeA - timeB
+      })
+      break
+    case "promotion":
+      sortedRestaurants = sortedRestaurants.filter(
+        (restaurant) =>
+          restaurant.tags.some((tag) => tag.toLowerCase() === "promoção") || restaurant.deliveryFee === "Grátis",
+      )
+      break
+    default:
+      // 'all' - no sorting needed
+      break
+  }
+
+  filteredRestaurants = sortedRestaurants
+  renderRestaurants(filteredRestaurants)
+}
+
+// Initialize category page
+function initializePage() {
+  currentCategory = getCategoryFromURL()
+  currentRestaurants = restaurantData[currentCategory] || []
+  filteredRestaurants = [...currentRestaurants]
+
+  // Update category header
+  const category = categoryInfo[currentCategory]
+  if (category) {
+    categoryTitle.textContent = category.name
+    categoryDescription.textContent = category.description
+    categoryImage.src = category.image
+    categoryImage.alt = category.name
+    restaurantCount.textContent = `${currentRestaurants.length} restaurantes`
+  }
+
+  // Update page title
+  document.title = `${category?.name || "Categoria"} - Fast4you`
+
+  renderRestaurants(filteredRestaurants)
+}
+
+// Event listeners
+if (searchInput) {
+  searchInput.addEventListener("input", (e) => {
+    filterRestaurants(e.target.value)
+  })
+}
+
+// Filter buttons
+document.querySelectorAll(".filter-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    // Remove active class from all buttons
+    document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"))
+    // Add active class to clicked button
+    btn.classList.add("active")
+
+    const filterType = btn.dataset.filter
+    applyFilter(filterType)
+  })
+})
+
+// Initialize the page
+document.addEventListener("DOMContentLoaded", () => {
+  loadProfileData();
+  initializePage();
+})
+    </script>
+</body>
+</html>

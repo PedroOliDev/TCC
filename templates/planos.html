@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos - Fast4You</title>
+    <link rel="stylesheet" href="../static/planos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+     
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="../static/imagens/logoTCC.jpg" alt="logo">
+                    </div>
+                    <div class="logo-text">
+                        <h1>Fast4You</h1>
+                        <div class="location">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>Entregar em Casa</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="history.back()">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    Voltar
+                </button>
+                              <div class="perfil-container" onclick="window.location.href='../templates/perfil.html'">
+                              <img id="fotoPerfil" alt="Foto de perfil">
+                              </div>
+
+            </div>
+
+        </div>
+    </header>
+
+     
+    <section class="restaurant-header">
+        <div class="container">
+            <div class="restaurant-info">
+                <img id="restaurantImage" src="/placeholder.svg" alt="" class="restaurant-image">
+                <div class="restaurant-details">
+                    <h1 id="restaurantName">Carregando...</h1>
+                    <p id="restaurantCuisine">Carregando...</p>
+                    <div class="restaurant-stats">
+                        <div class="stat">
+                            <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <span id="restaurantRating">0.0</span>
+                        </div>
+                        <span class="separator">•</span>
+                        <div class="stat">
+                            <svg class="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                            <span id="restaurantDeliveryTime">0 min</span>
+                        </div>
+                        <span class="separator">•</span>
+                        <div class="stat">
+                            <svg class="truck-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="3" width="15" height="13"></rect>
+                                <polygon points="16,8 20,8 23,11 23,16 16,16"></polygon>
+                                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                            <span id="restaurantDeliveryFee">Grátis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     
+    <section class="plans-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Escolha seu Plano</h2>
+                <p>Assine e tenha acesso exclusivo aos melhores pratos com desconto especial</p>
+            </div>
+
+            <div class="plans-grid" id="plansGrid">
+                
+            </div>
+        </div>
+    </section>
+
+     
+    <section class="benefits-section">
+        <div class="container">
+            <h2>Vantagens da Assinatura</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/>
+                            <path d="M2 7h20l-2 5H4l-2-5z"/>
+                            <path d="M12 22V7"/>
+                        </svg>
+                    </div>
+                    <h3>Lanches Mensais</h3>
+                    <p>Lanches sortidos serão entregues para voçê todo mês</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3>Descontos Exclusivos</h3>
+                    <p>Até 30% de desconto em pratos selecionados e promoções especiais</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                    </div>
+                    <h3>Prioridade na Entrega</h3>
+                    <p>Seus pedidos têm prioridade no preparo e entrega</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4"/>
+                            <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                            <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                        </svg>
+                    </div>
+                    <h3>Acesso Antecipado</h3>
+                    <p>Seja o primeiro a experimentar novos pratos e promoções</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+         window.onload = async () => {
+      const res = await fetch("http://localhost:5000/perfil", {
+        credentials: "include"
+      });
+
+      if (res.ok) {
+        const usuario = await res.json();
+        const foto = document.getElementById("fotoPerfil");
+
+        if (usuario.foto_url) {
+          foto.src = `http://localhost:5000${usuario.foto_url}`;
+        } else {
+          foto.src = '../static/imagens/default.png';
+        }
+      }
+    };
+        
+const restaurantData = {
+  1: {
+    name: "Burger King",
+    cuisine: "Fast Food",
+    image: "../static/imagens/Lanches.jpg",
+    rating: 4.5,
+    deliveryTime: "20-30 min",
+    deliveryFee: "Grátis",
+    plans: [
+      {
+        id: "basic",
+        title: "Plano Básico",
+        description: "Ideal para quem quer experimentar nossos sabores",
+        price: "R$ 19,90",
+        period: "/mês",
+        features: [
+          "Lanches até R$ 20,00",
+          "Entrega grátis",
+          "Lanches Novos todo Mes",
+          "Suporte prioritário",
+        ],
+      },
+      {
+        id: "premium",
+        title: "Plano Premium",
+        description: "Para os verdadeiros amantes de hambúrguer",
+        price: "R$ 39,90",
+        period: "/mês",
+        popular: true,
+        features: [
+          "Lanches acima de R$ 30,00",
+          "Entrega grátis",
+          "Acesso antecipado a novos produtos",
+          "Brinde mensal exclusivo",
+          "Suporte VIP 24/7",
+        ],
+      },
+      {
+        id: "family",
+        title: "Plano Família",
+        description: "Perfeito para compartilhar com toda a família",
+        price: "R$ 59,90",
+        period: "/mês",
+        features: [
+          "Lanches acima de R$ 40,00 para até 4 pessoas ",
+          "Entrega grátis",
+          "Válido para até 4 pessoas",
+          "Combos familiares exclusivos",
+          "Festa de aniversário grátis",
+        ],
+      },
+    ],
+  },
+  2: {
+    name: "McDonald's",
+    cuisine: "Fast Food",
+    image: "../static/imagens/Mc.png",
+    rating: 4.3,
+    deliveryTime: "25-35 min",
+    deliveryFee: "R$ 3,99",
+    plans: [
+      {
+        id: "basic",
+        title: "McPlano Básico",
+        description: "Comece sua jornada McDonald's",
+        price: "R$ 24,90",
+        period: "/mês",
+        features: [
+          "Lanches de até R$ 25,00",
+          "Entrega grátis em pedidos acima de R$ 30",
+          "Acesso ao app exclusivo",
+          "Pontos em dobro no programa de fidelidade",
+        ],
+      },
+      {
+        id: "premium",
+        title: "McPlano Premium",
+        description: "A experiência completa McDonald's",
+        price: "R$ 44,90",
+        period: "/mês",
+        popular: true,
+        features: [
+          "Pedidos acima de R$ 35,00",
+          "Entrega grátis",
+          "Acesso antecipado a novos produtos",
+          "Happy Meal grátis no aniversário",
+          "Atendimento prioritário",
+        ],
+      },
+    ],
+  },
+  5: {
+    name: "Domino's Pizza",
+    cuisine: "Pizzaria",
+    image: "fresh-pizza-margherita-with-basil.jpg",
+    rating: 4.6,
+    deliveryTime: "25-35 min",
+    deliveryFee: "Grátis",
+    plans: [
+      {
+        id: "basic",
+        title: "Pizza Lover",
+        description: "Para os amantes de pizza",
+        price: "R$ 29,90",
+        period: "/mês",
+        features: [
+          "20% de desconto em pizzas",
+          "Entrega grátis em pedidos acima de R$ 40",
+          "Pizza grátis no seu aniversário",
+          "Acesso a sabores exclusivos",
+        ],
+      },
+      {
+        id: "premium",
+        title: "Pizza Master",
+        description: "A experiência definitiva em pizzas",
+        price: "R$ 49,90",
+        period: "/mês",
+        popular: true,
+        features: [
+          "30% de desconto em todas as pizzas",
+          "Entrega grátis ilimitada",
+          "2 pizzas grátis por mês",
+          "Acesso antecipado a novos sabores",
+          "Personalização exclusiva de pizzas",
+        ],
+      },
+    ],
+  },
+}
+
+// DOM elements
+const restaurantName = document.getElementById("restaurantName")
+const restaurantCuisine = document.getElementById("restaurantCuisine")
+const restaurantImage = document.getElementById("restaurantImage")
+const restaurantRating = document.getElementById("restaurantRating")
+const restaurantDeliveryTime = document.getElementById("restaurantDeliveryTime")
+const restaurantDeliveryFee = document.getElementById("restaurantDeliveryFee")
+const plansGrid = document.getElementById("plansGrid")
+
+// Get restaurant ID from URL parameters
+function getRestaurantIdFromURL() {
+  const urlParams = new URLSearchParams(window.location.search)
+  return urlParams.get("restaurante") || "1"
+}
+
+// Create plan card HTML
+function createPlanCard(plan) {
+  return `
+    <div class="plan-card ${plan.popular ? "popular" : ""}" data-plan="${plan.id}">
+      <div class="plan-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <h3 class="plan-title">${plan.title}</h3>
+      <p class="plan-description">${plan.description}</p>
+      <div class="plan-price">
+        <div class="price-value">${plan.price}</div>
+        <div class="price-period">${plan.period}</div>
+      </div>
+      <ul class="plan-features">
+        ${plan.features.map((feature) => `<li>${feature}</li>`).join("")}
+      </ul>
+      <button class="subscribe-btn" onclick="subscribeToPlan('${plan.id}')">
+        Assinar Agora
+      </button>
+    </div>
+  `
+}
+
+// Subscribe to plan function
+function subscribeToPlan(planId) {
+  const restaurantId = getRestaurantIdFromURL()
+  // Redirect to subscription page with plan and restaurant info
+  window.location.href = `inscriçao.html?restaurante=${restaurantId}&plano=${planId}`
+}
+
+// Initialize page
+function initializePage() {
+  const restaurantId = getRestaurantIdFromURL()
+  const restaurant = restaurantData[restaurantId]
+
+  if (!restaurant) {
+    // Redirect back if restaurant not found
+    window.location.href = "produtos.html"
+    return
+  }
+
+  // Update restaurant info
+  restaurantName.textContent = restaurant.name
+  restaurantCuisine.textContent = restaurant.cuisine
+  restaurantImage.src = restaurant.image
+  restaurantImage.alt = restaurant.name
+  restaurantRating.textContent = restaurant.rating
+  restaurantDeliveryTime.textContent = restaurant.deliveryTime
+  restaurantDeliveryFee.textContent = restaurant.deliveryFee
+
+  // Update page title
+  document.title = `${restaurant.name} - Planos - FoodExpress`
+
+  // Render plans
+  plansGrid.innerHTML = restaurant.plans.map(createPlanCard).join("")
+}
+
+// Initialize the page
+document.addEventListener("DOMContentLoaded", initializePage)
+
+    </script>
+</body>
+</html>

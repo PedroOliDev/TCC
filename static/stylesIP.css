@@ -32,8 +32,8 @@ body {
     justify-content: center;
     height: 80vh;
     width: 80vh;
-    background-color: aliceblue;
-    border-radius: 50px;
+    background-color: rgba(240, 248, 255, 0.86);
+    border-radius: 25px;
     position: absolute;
   top: 50%;
   left: 50%;

@@ -36,16 +36,18 @@
   }
 }
     .perfil-container {
-      max-width: 400px;
-      margin: auto;
-      background: white;
+      margin-top: 5%;
+      margin-left: 28rem;
+      max-width: 500px;
+      
+      background: rgba(255, 255, 255, 0.94);
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     input, select {
-      width: 100%;
+      width: 90%;
       padding: 10px;
       margin-top: 10px;
       margin-bottom: 15px;

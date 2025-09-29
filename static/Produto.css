@@ -1,171 +1,443 @@
-/* Reset e configurações gerais */
+/* Reset and Base Styles */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: sans-serif;
-  background-color: white;
-  margin: 0;
-  padding: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  color: #2d3748;
+  background-color: #f8fafc;
 }
 
-/* 🔺 Barra de Navegação */
-.navbar {
-  background-color: #ff4d4f;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header Styles */
+.header {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
   color: white;
-  padding: 10px 20px;
+  padding: 1rem 0;
+  box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+}
+
+.header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-  height: 11vh;
+  margin-bottom: 1.5rem;
 }
 
-.navbar .logo {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.navbar .nav-links a {
-  color: white;
-  text-decoration: none;
-  margin: 0 15px;
-  font-size: 16px;
-  transition: color 0.3s;
-}
-
-.navbar .nav-links a:hover {
-  color: #ffd6d6;
-}
-
-.navbar .search-bar {
+.logo-section {
   display: flex;
   align-items: center;
-  position: relative;
-  right: 90vh;
-  height: 80px;
+  gap: 1rem;
 }
 
-.navbar .search-bar input {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  outline: none;
-  width: 250px;
-  height: 40px;
-}
-
-/* 🔻 Responsividade */
-@media (max-width: 600px) {
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .navbar .nav-links {
-    margin: 10px 0;
-  }
-
-  .navbar .search-bar {
-    width: 100%;
-    margin-top: 10px;
-  }
-
-  .navbar .search-bar input {
-    width: 100%;
-  }
-}
-
-/* 🔳 Container Principal */
-.maincontainer {
+.logo img {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: white;
-  width: 100%;
-  margin-top: 87px;
-  padding-bottom: 85px;
- 
-  
+  font-weight: 700;
+  font-size: 1.5rem;
+  backdrop-filter: blur(10px);
 }
 
-/* 📷 Imagem de perfil */
-.maincontainer img {
+.logo-text h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.back-btn {
+  position: absolute;
+  left: 80rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.search-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #64748b;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 4px 25px rgba(255, 107, 53, 0.2);
+}
+
+/* Category Header */
+.category-header {
+  background: white;
+  padding: 2rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.category-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.category-image {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: 16px;
   object-fit: cover;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
-
-/* 🔘 Botão padrão */
-button {
-  background-color: #ff0000;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: large;
-  font-weight: bold;
-  border-radius: 20px;
-  width: 150px;
-}
-
-/* 🔻 Item individual (opcional) */
-.item1 {
-  margin: 60px;
-  margin-bottom: 15vh;
-  background-color: #ffffff;
-  display: grid;
-  grid-gap: 25px;
-}
-
-.item2 {
-  margin: 60px;
-  margin-bottom: 15vh;
-  background-color: #ffffff;
-  display: grid;
-  grid-gap: 25px;
-}
-
-/* 🖼️ Logo no canto superior esquerdo */
-.logo {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  position: absolute;
-  left: 1%;
-  top: 5px;
-  object-fit: cover;
-}
-
-/* 👤 Ícone ou foto de perfil no canto superior direito */
-.perfil-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  border-radius: 50%;
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-
 
  #fotoPerfil {
   width: 70px;
   height: 70px;
-  border-radius: 50%;
+  border-radius: 20%;
   object-fit: cover;
   position: relative;
-  bottom: 15px;
+  right: 30px;}
+
+  .perfil-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #0a0a0a;
+    cursor: pointer;
+    transition: background-color 0.3s;
+   
+  }
   
+
+.category-details h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #1a202c;
+}
+
+.category-details p {
+  color: #64748b;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.category-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.separator {
+  color: #cbd5e0;
+}
+
+/* Filters */
+.filters-section {
+  background: white;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.filter-btn {
+  background: #f1f5f9;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  color: #64748b;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: #ff6b35;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Main Content */
+.main {
+  padding: 2rem 0;
+}
+
+.restaurants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Restaurant Card */
+.restaurant-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.restaurant-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-image-container {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.restaurant-card:hover .card-image {
+  transform: scale(1.05);
+}
+
+.card-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #ff6b35;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.card-rating {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.star-icon {
+  width: 14px;
+  height: 14px;
+  color: #fbbf24;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 0.25rem;
+}
+
+.card-cuisine {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.card-delivery-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.delivery-time,
+.delivery-fee {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.clock-icon,
+.truck-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.tag.promotion {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #1a202c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-top {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .logo-section {
+    justify-content: center;
+  }
+
+  .back-btn {
+    align-self: flex-start;
+  }
+
+  .category-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .category-details h1 {
+    font-size: 1.5rem;
+  }
+
+  .restaurants-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .filters {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }
