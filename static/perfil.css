@@ -1,76 +1,168 @@
+/* === Estilos Gerais === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: rgba(255, 4, 4, 0.697);
-     
+      background: #0f0c29;
+      background: linear-gradient(to right, #f86969, #ffc6c6, #f86969);
+      color: #fff;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
     }
 
+    /* === Animação de Estrelas === */
     .stars {
-  position: fixed; /* cobre a tela toda */
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  top: 0;
-  left: 0;
-}
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-/* Estilo de cada estrela */
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  animation: blink 2s infinite ease-in-out;
-  opacity: 0.8;
-}
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite ease-in-out;
+    }
 
-/* Animação de brilho */
-@keyframes blink {
-  0%, 100% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 1;
-  }
-}
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    /* === Container do Perfil === */
     .perfil-container {
-      margin-top: 5%;
-      margin-left: 28rem;
-      max-width: 500px;
-      
-      background: rgba(255, 255, 255, 0.94);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      background: rgba(25, 25, 45, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
     }
 
-    input, select {
-      width: 90%;
-      padding: 10px;
-      margin-top: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    button {
-      background-color: #ff0000;
-      color: rgb(255, 255, 255);
-      border: none;
-      padding: 12px;
-      border-radius: 5px;
-      cursor: pointer;
+    .perfil-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 28px;
+      color: #e0e0ff;
     }
 
     .foto-preview {
-      display: block;
-      margin: auto;
-      margin-bottom: 10px;
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 20px;
+      border: 3px solid #6a5af9;
+      background: #1e1e2f;
     }
-  
+
+    input[type="file"] {
+      display: block;
+      margin: 0 auto 20px;
+      width: 200px;
+      color: #aaa;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(40, 40, 60, 0.8);
+      color: white;
+      font-size: 16px;
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
+
+    input[disabled] {
+      background: rgba(30, 30, 45, 0.6);
+      color: #ccc;
+    }
+
+    /* === Seções de Assinaturas === */
+    .historico-assinaturas,
+    .assinaturas-mais-consumidas {
+      margin: 25px 0;
+      padding: 15px;
+      background: rgba(35, 35, 55, 0.6);
+      border-radius: 10px;
+    }
+
+    .historico-assinaturas h3,
+    .assinaturas-mais-consumidas h3 {
+      margin-bottom: 12px;
+      color: #a0a0ff;
+      font-size: 20px;
+    }
+
+    .historico-assinaturas ul,
+    .assinaturas-mais-consumidas ul {
+      list-style: none;
+    }
+
+    .historico-assinaturas li,
+    .assinaturas-mais-consumidas li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 15px;
+    }
+
+    .historico-assinaturas li:last-child,
+    .assinaturas-mais-consumidas li:last-child {
+      border-bottom: none;
+    }
+
+    .historico-assinaturas strong {
+      color: #6a5af9;
+    }
+
+    /* === Botão === */
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #6a5af9, #8677ff);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    /* === Responsividade === */
+    @media (max-width: 600px) {
+      .perfil-container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      .foto-preview {
+        width: 100px;
+        height: 100px;
+      }
+    }

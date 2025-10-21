@@ -1,124 +1,19 @@
- body {
-      background-color: rgb(255, 255, 255);
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-
-.status {margin-top:10px;}
-
-    .payment-details {display:none; margin-top:10px;}
-
-    .logo {
-  width: 20vh;
-  height: 20vh;
-  border-radius: 50%;
-  margin-bottom: 20px;
-  position: absolute;
-  left: 1%;
-}
-h2 {
-      text-align: center;
-      color: white;
-      font-size: 24px;
-      margin-bottom: 20px;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    form {
-      height: 80vh;
-        padding: 60px;
-        max-width: 500px;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin-top: 70px;
-      border: 2px solid #fff;
-      animation: mudar-cor 4s infinite;
-      border-radius: 15px;
-      background-color: #f73636db;
-    }
-
-    @keyframes mudar-cor {
-  0% { box-shadow: 0 0 15px #00ffff; }
-  33% { box-shadow: 0 0 15px #ff00ff; }
-  66% { box-shadow: 0 0 15px #ffff00; }
-  100% { box-shadow: 0 0 15px #00ffff; }
+body {
+  background: linear-gradient(135deg, #ff7c7c 0%, #f93030 50%, #fd1313 100%);
+  background-attachment: fixed;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  min-height: 100vh;
 }
 
+.status {
+  margin-top: 10px;
+}
 
-.perfil-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    border-radius: 100px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #0a0a0a;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  
-  }
-  
-  
-  
-  .perfil-texto {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 20px;
-      margin-left: 13%;
-      ;
-    }
-
-    input, select {
-      width: 50vh;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid white;
-      border-radius: 6px;
-      background: #ff2f2f;
-      color: white;
-      margin-left: 13%;
-    }
-
-    button {
-      margin-left: 13%;
-      margin-top: 30px;
-      width: 50vh;
-      padding: 12px;
-      font-size: 18px;
-      background-color: #ffffffa4;
-      color: rgba(0, 0, 0, 0.725);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #ffffff;
-    }
-
-    .mensagem {
-      text-align: center;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    #fotoPerfil {
-  width: 70px;
-  height: 70px;
-  border-radius: 5%;
-  object-fit: cover;
-  position: relative;
-  right: 30px;
+.payment-details {
+  display: none;
+  margin-top: 10px;
 }
 
 .logo {
@@ -126,14 +21,260 @@ h2 {
   height: 10rem;
   border-radius: 50%;
   position: absolute;
-  left: 1%;
-  top: 5px;
+  left: 2%;
+  top: 20px;
   object-fit: cover;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+h2 {
+  text-align: center;
+  color: white;
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+  margin: 10vh;
+}
+
+form {
+  max-width: 650px;
+  margin: 100px auto 40px;
+  padding: 50px 40px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  animation: slideUp 0.6s ease-out, glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(255, 255, 255, 0.999);
+  }
+  50% {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 50px rgba(255, 51, 51, 0.973);
+  }
+}
+
+.perfil-container {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.perfil-container:hover {
+  transform: translateY(-3px);
+}
+
+#fotoPerfil {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+#fotoPerfil:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.perfil-texto {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .container #titulo-restaurante {
-  position: relative;
-  left: 30%;
-  font-size: 2rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 35px;
+  font-size: 2.5rem;
   color: white;
-  font-family: Arial, Helvetica, sans-serif; }
+  font-weight: 700;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.4);
+  letter-spacing: 2px;
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  margin-top: 25px;
+  margin-bottom: 8px;
+  color: white;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+input, select {
+  width: 90%;
+  padding: 14px 18px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  color: white;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1),
+              0 8px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+select {
+  cursor: pointer;
+}
+
+select option {
+  background: #667eea;
+  color: white;
+  padding: 10px;
+}
+
+button {
+  width: 100%;
+  margin-top: 35px;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+}
+
+button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.mensagem {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: 600;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  form {
+    margin: 140px 20px 40px;
+    padding: 40px 25px;
+  }
+
+  .logo {
+    width: 80px;
+    height: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10px;
+  }
+
+  .container #titulo-restaurante {
+    font-size: 1.8rem;
+    top: 100px;
+  }
+
+  .perfil-container {
+    top: 10px;
+    right: 10px;
+  }
+
+  #fotoPerfil {
+    width: 60px;
+    height: 60px;
+  }
+
+  h2 {
+    font-size: 26px;
+  }
+
+  button {
+    font-size: 16px;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}

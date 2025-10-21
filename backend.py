@@ -300,5 +300,82 @@ def logout():
     return jsonify({'message': 'Logout realizado com sucesso'}), 200
 
 
+@app.route('/historico-assinaturas', methods=['GET'])
+def historico_assinaturas():
+    if 'usuario_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
+
+    usuario_id = session['usuario_id']
+
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT plano, status, data_inicio AS data
+            FROM assinaturas
+            WHERE id_usuario = %s
+            ORDER BY data_inicio DESC
+        """, (usuario_id,))
+        historico = cursor.fetchall()
+
+        # Formata para o frontend
+        resultado = []
+        for item in historico:
+            resultado.append({
+                'plano': item['plano'] or 'Plano básico',
+                'status': item['status'].capitalize(),
+                'data': str(item['data'])
+            })
+
+        return jsonify(resultado), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Erro ao carregar histórico: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+@app.route('/assinaturas-mais-consumidas', methods=['GET'])
+def assinaturas_mais_consumidas():
+    if 'usuario_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
+
+    usuario_id = session['usuario_id']
+
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT plano, COUNT(*) AS total
+            FROM assinaturas
+            WHERE id_usuario = %s
+            GROUP BY plano
+            ORDER BY total DESC
+            LIMIT 5
+        """, (usuario_id,))
+        resultados = cursor.fetchall()
+
+        # Convertemos para o formato esperado pelo frontend
+        lista = []
+        for item in resultados:
+            plano = item['plano'] or 'Plano básico'
+            dias = item['total'] * 30  # assumindo 30 dias por assinatura
+            lista.append({
+                'plano': plano,
+                'dias': dias
+            })
+
+        return jsonify(lista), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Erro ao carregar assinaturas mais consumidas: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
 if __name__ == '__main__':
     app.run(debug=True)

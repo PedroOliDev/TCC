@@ -20,79 +20,165 @@
     <input type="email" id="email" placeholder="Email" disabled />
     <input type="password" id="senha" placeholder="Nova senha" />
 
+    <!-- Histórico de Assinaturas -->
+    <section class="historico-assinaturas">
+      <h3>Histórico de Assinaturas</h3>
+      <ul id="lista-historico">
+        <li>Carregando...</li>
+      </ul>
+    </section>
+
+    <!-- Assinaturas Mais Consumidas -->
+    <section class="assinaturas-mais-consumidas">
+      <h3>Assinaturas Mais Consumidas</h3>
+      <ul id="lista-mais-consumidas">
+        <li>Carregando...</li>
+      </ul>
+    </section>
 
     <button onclick="salvarPerfil()">Salvar Alterações</button>
   </div>
 
   <script>
-    // 🔄 Carrega perfil ao entrar na página
     const baseURL = "http://localhost:5000";
 
-window.onload = () => {
-  fetch(`${baseURL}/perfil`, {
-    method: "GET",
-    credentials: "include"
-  })
-  .then(res => {
-    if (res.status === 401) {
-      alert("Você precisa estar logado.");
-      window.location.href = `${baseURL}/login.html`; // redireciona via servidor
+    // ✨ Animação de estrelas
+    const starsContainer = document.createElement('div');
+    starsContainer.classList.add('stars');
+    document.body.appendChild(starsContainer);
+
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.width = `${Math.random() * 2 + 1}px`;
+      star.style.height = star.style.width;
+      star.style.animationDuration = `${2 + Math.random() * 3}s`;
+      star.style.animationDelay = `${Math.random() * 2}s`;
+      starsContainer.appendChild(star);
     }
-    return res.json();
-  })
-  .then(usuario => {
-    document.getElementById('nome').value = usuario.nome || '';
-    document.getElementById('email').value = usuario.email || '';
 
-    if (usuario.foto_url) {
-      document.getElementById('fotoPreview').src = baseURL + usuario.foto_url;
-    } else {
-      document.getElementById('fotoPreview').src = baseURL + '/static/imagens/default.png';
-    }
-  });
-};
+    // 🔄 Carrega perfil e dados de assinaturas
+    window.onload = () => {
+      // Carrega perfil
+      fetch(`${baseURL}/perfil`, {
+        method: "GET",
+        credentials: "include"
+      })
+      .then(res => {
+        if (res.status === 401) {
+          alert("Você precisa estar logado.");
+          window.location.href = `${baseURL}/login.html`;
+          return;
+        }
+        return res.json();
+      })
+      .then(usuario => {
+        if (!usuario) return;
+        document.getElementById('nome').value = usuario.nome || '';
+        document.getElementById('email').value = usuario.email || '';
 
+        const fotoPreview = document.getElementById('fotoPreview');
+        if (usuario.foto_url) {
+          fotoPreview.src = baseURL + usuario.foto_url;
+        } else {
+          fotoPreview.src = baseURL + '/static/imagens/default.png';
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao carregar perfil:", err);
+        document.getElementById('lista-historico').innerHTML = '<li>Erro ao carregar.</li>';
+      });
 
-    // 💾 Envia dados atualizados
+      // Carrega histórico de assinaturas
+      fetch(`${baseURL}/historico-assinaturas`, {
+        method: "GET",
+        credentials: "include"
+      })
+      .then(res => {
+        if (res.status === 401) {
+          window.location.href = `${baseURL}/login.html`;
+          return;
+        }
+        return res.json();
+      })
+      .then(historico => {
+        const lista = document.getElementById('lista-historico');
+        if (historico && historico.length > 0) {
+          lista.innerHTML = historico.map(item => 
+            `<li><strong>${item.plano}</strong> – ${item.status} em ${new Date(item.data).toLocaleDateString('pt-BR')}</li>`
+          ).join('');
+        } else {
+          lista.innerHTML = '<li>Nenhum histórico encontrado.</li>';
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao carregar histórico:", err);
+        document.getElementById('lista-historico').innerHTML = '<li>Erro ao carregar histórico.</li>';
+      });
+
+      // Carrega assinaturas mais consumidas
+      fetch(`${baseURL}/assinaturas-mais-consumidas`, {
+        method: "GET",
+        credentials: "include"
+      })
+      .then(res => {
+        if (res.status === 401) {
+          window.location.href = `${baseURL}/login.html`;
+          return;
+        }
+        return res.json();
+      })
+      .then(maisConsumidas => {
+        const lista = document.getElementById('lista-mais-consumidas');
+        if (maisConsumidas && maisConsumidas.length > 0) {
+          lista.innerHTML = maisConsumidas.map(item => 
+            `<li>${item.plano} – ${item.dias} dias utilizados</li>`
+          ).join('');
+        } else {
+          lista.innerHTML = '<li>Nenhuma assinatura registrada.</li>';
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao carregar assinaturas mais consumidas:", err);
+        document.getElementById('lista-mais-consumidas').innerHTML = '<li>Erro ao carregar dados.</li>';
+      });
+    };
+
+    // 💾 Salvar perfil
     function salvarPerfil() {
-      const nome = document.getElementById('nome').value;
+      const nome = document.getElementById('nome').value.trim();
       const senha = document.getElementById('senha').value;
       const foto = document.getElementById('foto').files[0];
 
+      if (!nome) {
+        alert("Por favor, preencha o nome.");
+        return;
+      }
+
       const formData = new FormData();
       formData.append('nome', nome);
-      formData.append('senha', senha);
+      if (senha) formData.append('senha', senha);
       if (foto) formData.append('foto', foto);
 
-      fetch("http://localhost:5000/atualizar-perfil", {
+      fetch(`${baseURL}/atualizar-perfil`, {
         method: "POST",
         body: formData,
         credentials: "include"
       })
       .then(res => res.json())
       .then(data => {
-        alert(data.message);
-        location.reload();
+        alert(data.message || "Perfil atualizado com sucesso!");
+        if (data.success) {
+          location.reload();
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao salvar:", err);
+        alert("Ocorreu um erro ao salvar as alterações.");
       });
     }
-
-
-
-  const starsContainer = document.createElement('div');
-  starsContainer.classList.add('stars');
-  document.body.appendChild(starsContainer);
-
-  for (let i = 0; i < 200; i++) {
-    const star = document.createElement('div');
-    star.classList.add('star');
-    star.style.top = `${Math.random() * 100}%`;
-    star.style.left = `${Math.random() * 100}%`;
-    star.style.animationDuration = `${1 + Math.random() * 3}s`;
-    starsContainer.appendChild(star);
-  }
-
-
-
   </script>
 </body>
 </html>
