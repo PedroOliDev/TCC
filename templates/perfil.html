@@ -39,8 +39,34 @@
     <button onclick="salvarPerfil()">Salvar Alterações</button>
   </div>
 
+  <div id="adminSection" style="display: none; margin-top: 20px; text-align: center;">
+    <h3>Área Administrativa</h3>
+    <button onclick="window.location.href='http://localhost:5000/admin'" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Gerenciar Restaurantes e Clientes
+    </button>
+</div>
+
   <script>
     const baseURL = "http://localhost:5000";
+
+    // Função para verificar se o usuário é admin
+    async function checkAdminStatus() {
+        try {
+            const res = await fetch('http://localhost:5000/check_admin', {
+                credentials: 'include',  // Inclui cookies/sessão
+                mode: 'cors'
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.is_admin) {
+                    document.getElementById('adminSection').style.display = 'block';  // Mostra o botão
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao verificar status de admin:', error);
+        }
+    }
+
 
     // ✨ Animação de estrelas
     const starsContainer = document.createElement('div');
@@ -179,6 +205,11 @@
         alert("Ocorreu um erro ao salvar as alterações.");
       });
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAdminStatus();
+        
+    });
   </script>
 </body>
 </html>

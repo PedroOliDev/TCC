@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Admin - Gerenciar Restaurantes e Clientes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        button { margin: 5px; padding: 5px 10px; cursor: pointer; }
+        form { margin-bottom: 20px; background: #f5f5f5; padding: 15px; border-radius: 8px; }
+        input, textarea, select { display: block; margin: 5px 0; width: 100%; padding: 8px; }
+        img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+        h2 { margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <h1>Painel de Administração</h1>
+    <p>Bem-vindo, {{ session['usuario_nome'] }}!</p>
+    <button onclick="logout()">Logout</button>
+
+    <h2>Gerenciar Restaurantes</h2>
+    <form id="restauranteForm" enctype="multipart/form-data">
+        <input type="hidden" id="restauranteId">
+
+        <label>Nome *</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label>Endereço</label>
+        <input type="text" id="endereco">
+
+        <label>Telefone</label>
+        <input type="text" id="telefone">
+
+        <label>Descrição</label>
+        <textarea id="descricao"></textarea>
+
+        <label>Categoria</label>
+        <select id="categoria">
+            <option value="">Selecione</option>
+            <option value="Lanches">Lanches</option>
+            <option value="pizzas">Pizzas</option>
+            <option value="Japonesa">Japonesa</option>
+            <option value="Brasileira">Brasileira</option>
+            <option value="Doces">Doçaria</option>
+        </select>
+
+        <label>Rating (0 a 5)</label>
+        <input type="number" id="rating" min="0" max="5" step="0.1">
+
+        <label>Tempo de Entrega</label>
+        <input type="text" id="delivery_time">
+
+        <label>Taxa de Entrega (R$)</label>
+        <input type="number" id="delivery_fee" step="0.01">
+
+        <label>Tags</label>
+        <input type="text" id="tags">
+
+        <label>Badge</label>
+        <input type="text" id="badge">
+
+        <label>Foto</label>
+        <input type="file" id="foto" accept="image/*">
+
+        <button type="submit">Salvar Restaurante</button>
+    </form>
+
+    <table id="restaurantesTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Rating</th>
+                <th>Entrega</th>
+                <th>Taxa</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Gerenciar Clientes</h2>
+    <table id="clientesTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Admin</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+<script>
+const apiBase = 'http://localhost:5000';
+
+window.onload = () => {
+    loadRestaurantes();
+    loadClientes();
+};
+
+// ===== LOGOUT =====
+function logout() {
+    fetch(`${apiBase}/logout`, { method: 'POST', credentials: 'include' })
+        .then(() => (window.location.href = '/login'));
+}
+
+// ===== RESTAURANTES =====
+function loadRestaurantes() {
+    fetch(`${apiBase}/api/restaurantes`, { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector('#restaurantesTable tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(r => {
+                const dadosCodificados = encodeURIComponent(JSON.stringify(r));
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${r.id}</td>
+                        <td><img src="${r.image || '/static/imagens/default_restaurante.png'}"></td>
+                        <td>${r.nome}</td>
+                        <td>${r.categoria || '-'}</td>
+                        <td>${r.rating || '-'}</td>
+                        <td>${r.delivery_time || '-'}</td>
+                        <td>${r.delivery_fee ? 'R$ ' + parseFloat(r.delivery_fee).toFixed(2) : '-'}</td>
+                        <td>
+                            <button onclick="editRestaurante(${r.id}, '${dadosCodificados.replace(/'/g, "\\'")}')">Editar</button>
+                            <button onclick="deleteRestaurante(${r.id})">Deletar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+// ===== SALVAR =====
+document.getElementById('restauranteForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.getElementById('restauranteId').value;
+    const formData = new FormData();
+
+    const campos = [
+        'nome', 'endereco', 'telefone', 'descricao', 'categoria',
+        'rating', 'delivery_time', 'delivery_fee', 'tags', 'badge'
+    ];
+
+    campos.forEach(campo => {
+        const valor = document.getElementById(campo)?.value;
+        if (valor !== undefined && valor !== null) {
+            formData.append(campo, valor);
+        }
+    });
+
+    const foto = document.getElementById('foto').files[0];
+    if (foto) formData.append('foto', foto);
+
+    const method = id ? 'PUT' : 'POST';
+    const url = id
+        ? `${apiBase}/api/restaurantes/${id}`
+        : `${apiBase}/api/restaurantes`;
+
+    fetch(url, {
+        method,
+        credentials: 'include',
+        body: formData
+    }).then(res => {
+        if (res.ok) {
+            loadRestaurantes();
+            document.getElementById('restauranteForm').reset();
+            document.getElementById('restauranteId').value = '';
+        } else {
+            alert("Erro ao salvar restaurante");
+        }
+    });
+});
+
+// ===== EDITAR =====
+function editRestaurante(id, dadosCodificados) {
+    const dados = JSON.parse(decodeURIComponent(dadosCodificados));
+    document.getElementById('restauranteId').value = id;
+
+    for (const campo in dados) {
+        if (document.getElementById(campo)) {
+            document.getElementById(campo).value = dados[campo] || '';
+        }
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== DELETAR =====
+function deleteRestaurante(id) {
+    if (!confirm("Tem certeza que deseja deletar?")) return;
+
+    fetch(`${apiBase}/api/restaurantes/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+    }).then(() => loadRestaurantes());
+}
+
+// ===== CLIENTES =====
+function loadClientes() {
+    fetch(`${apiBase}/api/clientes`, { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector('#clientesTable tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(c => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${c.id}</td>
+                        <td><input type="text" value="${c.nome}" onchange="updateCliente(${c.id}, 'nome', this.value)"></td>
+                        <td>${c.email}</td>
+                        <td><input type="checkbox" ${c.is_admin ? 'checked' : ''} onchange="updateCliente(${c.id}, 'is_admin', this.checked ? 1 : 0)"></td>
+                        <td><button onclick="deleteCliente(${c.id})">Deletar</button></td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+function updateCliente(id, field, value) {
+    fetch(`${apiBase}/api/clientes/${id}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: value })
+    });
+}
+
+function deleteCliente(id) {
+    if (!confirm("Deseja excluir este cliente?")) return;
+    fetch(`${apiBase}/api/clientes/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+    }).then(loadClientes);
+}
+</script>
+
+</body>
+</html>

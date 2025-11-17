@@ -151,274 +151,35 @@
             }
         }
 
-      // Restaurant data by category
-const restaurantData = {
-  lanches: [
-    {
-      id: 1,
-      name: "Burger King",
-      cuisine: "Fast Food",
-      image: "../static/imagens/BK.png",
-      rating: 4.5,
-      deliveryTime: "20-30 min",
-      deliveryFee: "Grátis",
-      tags: ["Promoção", "Popular"],
-      badge: "Oferta",
-    },
-    {
-      id: 2,
-      name: "McDonald's",
-      cuisine: "Fast Food",
-      image: "../static/imagens/Mc.png",
-      rating: 4.3,
-      deliveryTime: "25-35 min",
-      deliveryFee: "R$ 3,99",
-      tags: ["Rápido", "Família"],
-      badge: null,
-    },
-    {
-      id: 3,
-      name: "Subway",
-      cuisine: "Sanduíches",
-      image: "../static/imagens/Subway.jpg",
-      rating: 4.4,
-      deliveryTime: "15-25 min",
-      deliveryFee: "Grátis",
-      tags: ["Saudável", "Rápido"],
-      badge: "Novo",
-    },
-    {
-      id: 4,
-      name: "Outback Steakhouse",
-      cuisine: "Hambúrguers Gourmet",
-      image: "../static/imagens/Outback.jpg",
-      rating: 4.7,
-      deliveryTime: "35-45 min",
-      deliveryFee: "R$ 5,99",
-      tags: ["Premium", "Gourmet"],
-      badge: null,
-    },
-  ],
-  pizzas: [
-    {
-      id: 5,
-      name: "Domino's Pizza",
-      cuisine: "Pizzaria",
-      image: "../static/imagens/Dominos.jpg",
-      rating: 4.6,
-      deliveryTime: "25-35 min",
-      deliveryFee: "Grátis",
-      tags: ["Promoção", "Família"],
-      badge: "Oferta",
-    },
-    {
-      id: 6,
-      name: "Pizza Hut",
-      cuisine: "Pizzaria",
-      image: "../static/imagens/pizzahut.png",
-      rating: 4.4,
-      deliveryTime: "30-40 min",
-      deliveryFee: "R$ 4,99",
-      tags: ["Tradicional", "Família"],
-      badge: null,
-    },
-    {
-      id: 7,
-      name: "Donatellos Pizzaria",
-      cuisine: "Pizza Artesanal",
-      image: "../static/imagens/donatellos.jpg",
-      rating: 4.8,
-      deliveryTime: "35-45 min",
-      deliveryFee: "R$ 6,99",
-      tags: ["Artesanal", "Premium"],
-      badge: null,
-    },
-    {
-      id: 8,
-      name: "Pizzaria do Bairro",
-      cuisine: "Pizza Tradicional",
-      image: "../static/imagens/Pizarria.jpg",
-      rating: 4.2,
-      deliveryTime: "20-30 min",
-      deliveryFee: "Grátis",
-      tags: ["Caseiro", "Barato"],
-      badge: "Popular",
-    },
-  ],
-  japonesa: [
-    {
-      id: 9,
-      name: "Sushi Leblon",
-      cuisine: "Japonesa",
-      image: "fresh-sushi-and-sashimi-platter.jpg",
-      rating: 4.9,
-      deliveryTime: "40-50 min",
-      deliveryFee: "R$ 7,99",
-      tags: ["Premium", "Fresco"],
-      badge: null,
-    },
-    {
-      id: 10,
-      name: "Temakeria Makoto",
-      cuisine: "Temakeria",
-      image: "fresh-sushi-and-sashimi-platter.jpg",
-      rating: 4.7,
-      deliveryTime: "30-40 min",
-      deliveryFee: "Grátis",
-      tags: ["Rápido", "Qualidade"],
-      badge: "Oferta",
-    },
-  ],
-  italiana: [
-    {
-      id: 11,
-      name: "Pasta & Basta",
-      cuisine: "Italiana",
-      image: "pasta-carbonara-with-parmesan-cheese.jpg",
-      rating: 4.6,
-      deliveryTime: "25-35 min",
-      deliveryFee: "R$ 4,99",
-      tags: ["Tradicional", "Caseiro"],
-      badge: null,
-    },
-    {
-      id: 12,
-      name: "Nonna Mia",
-      cuisine: "Italiana Autêntica",
-      image: "pasta-carbonara-with-parmesan-cheese.jpg",
-      rating: 4.8,
-      deliveryTime: "30-40 min",
-      deliveryFee: "R$ 5,99",
-      tags: ["Autêntico", "Premium"],
-      badge: "Novo",
-    },
-  ],
-  brasileira: [
-    {
-      id: 13,
-      name: "Casa da Feijoada",
-      cuisine: "Brasileira",
-      image: "feijoada-with-rice-and-orange-slices.jpg",
-      rating: 4.7,
-      deliveryTime: "35-45 min",
-      deliveryFee: "Grátis",
-      tags: ["Tradicional", "Caseiro"],
-      badge: "Popular",
-    },
-    {
-      id: 14,
-      name: "Boteco do Manoel",
-      cuisine: "Comida Caseira",
-      image: "feijoada-with-rice-and-orange-slices.jpg",
-      rating: 4.5,
-      deliveryTime: "30-40 min",
-      deliveryFee: "R$ 3,99",
-      tags: ["Caseiro", "Barato"],
-      badge: null,
-    },
-  ],
-  doces: [
-    {
-      id: 15,
-      name: "Confeitaria Colombo",
-      cuisine: "Confeitaria",
-      image: "chocolate-cake-strawberries.png",
-      rating: 4.8,
-      deliveryTime: "20-30 min",
-      deliveryFee: "R$ 4,99",
-      tags: ["Artesanal", "Tradicional"],
-      badge: null,
-    },
-    {
-      id: 16,
-      name: "Doce Vida",
-      cuisine: "Doces & Bolos",
-      image: "chocolate-cake-strawberries.png",
-      rating: 4.6,
-      deliveryTime: "15-25 min",
-      deliveryFee: "Grátis",
-      tags: ["Caseiro", "Promoção"],
-      badge: "Oferta",
-    },
-  ],
-  salgados: [
-    {
-      id: 17,
-      name: "Salgaderia da Esquina",
-      cuisine: "Salgados",
-      image: "brazilian-coxinha-and-pastels.jpg",
-      rating: 4.4,
-      deliveryTime: "15-25 min",
-      deliveryFee: "Grátis",
-      tags: ["Rápido", "Barato"],
-      badge: "Popular",
-    },
-    {
-      id: 18,
-      name: "Casa do Pastel",
-      cuisine: "Pastéis & Salgados",
-      image: "brazilian-coxinha-and-pastels.jpg",
-      rating: 4.3,
-      deliveryTime: "20-30 min",
-      deliveryFee: "R$ 2,99",
-      tags: ["Tradicional", "Caseiro"],
-      badge: null,
-    },
-  ],
-}
+        
 
-// Category information
-const categoryInfo = {
-  lanches: {
-    name: "Lanches",
-    description: "Hambúrguers, sanduíches e fast food",
-    image: "../static/imagens/Lanches.jpg",
-  },
-  pizzas: {
-    name: "Pizzas",
-    description: "Pizzas tradicionais e gourmet",
-    image: "../static/imagens/Pizza.jpg",
-  },
-  japonesa: {
-    name: "Japonesa",
-    description: "Sushi, sashimi e pratos orientais",
-    image: "../static/imagens/Japa.jpg",
-  },
-  italiana: {
-    name: "Italiana",
-    description: "Massas, risotos e pratos italianos",
-    image: "../static/imagens/Italiana.jpg",
-  },
-  brasileira: {
-    name: "Brasileira",
-    description: "Pratos típicos da culinária brasileira",
-    image: "../static/imagens/Brasileira.jpg",
-  },
-  doces: {
-    name: "Doces",
-    description: "Sobremesas, bolos e doces artesanais",
-    image: "../static/imagens/Doces.jpg",
-  },
-  salgados: {
-    name: "Salgados",
-    description: "Coxinhas, pastéis e salgados fritos",
-    image: "../static/imagens/Salgados.jpg",
-  },
-}
+      // Restaurant data by category
+          const categoryInfo = {
+        lanches: { name: "Lanches", description: "Hambúrguers, sanduíches e fast food", image: "../static/imagens/Lanches.jpg" },
+        pizzas: { name: "Pizzas", description: "Pizzas tradicionais e gourmet", image: "../static/imagens/Pizza.jpg" },
+        japonesa:{ name: "Culinária Japonesa", description: "Sushi, sashimi e pratos japoneses", image: "../static/imagens/Japa.jpg" },
+        italiana:{ name: "Culinária Italiana", description: "Massas, risotos e pratos italianos", image: "../static/imagens/Italiana.jpg" },
+        brasileira:{ name: "Culinária Brasileira", description: "Pratos típicos do Brasil", image: "../static/imagens/Brasileira.jpg" },
+        doces:{ name: "Doces e Sobremesas", description: "Delícias açucaradas para adoçar seu dia", image: "../static/imagens/Doces.jpg" },
+        salgados:{ name: "Salgados", description: "Coxinhas, empadas e mais", image: "../static/imagens/Salgados.jpg" },
+      
+        // Adicione outras categorias conforme necessário
+    }
 
 // DOM elements
 const searchInput = document.getElementById("searchInput")
-const restaurantsGrid = document.getElementById("restaurantsGrid")
-const emptyState = document.getElementById("emptyState")
-const categoryTitle = document.getElementById("categoryTitle")
-const categoryDescription = document.getElementById("categoryDescription")
-const categoryImage = document.getElementById("categoryImage")
-const restaurantCount = document.getElementById("restaurantCount")
+    const restaurantsGrid = document.getElementById("restaurantsGrid")
+    const emptyState = document.getElementById("emptyState")
+    const categoryTitle = document.getElementById("categoryTitle")
+    const categoryDescription = document.getElementById("categoryDescription")
+    const categoryImage = document.getElementById("categoryImage")
+    const restaurantCount = document.getElementById("restaurantCount")
 
 // State
-let currentCategory = "lanches"
-let currentRestaurants = []
-let filteredRestaurants = []
+
+    let currentCategory = "lanches"
+    let currentRestaurants = []
+    let filteredRestaurants = []
 
 // Get category from URL parameters
 function getCategoryFromURL() {
@@ -555,26 +316,63 @@ function applyFilter(filterType) {
   renderRestaurants(filteredRestaurants)
 }
 
+// Função para carregar restaurantes da API
+    async function loadRestaurantsFromAPI(categoria) {
+        try {
+            const res = await fetch(`http://localhost:5000/api/restaurantes/categoria/${categoria}`, {
+                credentials: 'include',
+                mode: 'cors'
+            });
+            if (res.ok) {
+                const data = await res.json();
+                currentRestaurants = data.map(r => ({
+                    id: r.id,
+                    name: r.name,
+                    cuisine: r.cuisine || 'Categoria Geral',  // Usar endereco como placeholder
+                    image: r.image,
+                    rating: r.rating,
+                    deliveryTime: r.delivery_time,
+                    deliveryFee: r.delivery_fee,
+                    tags: r.tags,
+                    badge: r.badge
+                }));
+                filteredRestaurants = [...currentRestaurants];
+                renderRestaurants(filteredRestaurants);
+                updateCategoryHeader(categoria);
+            } else {
+                console.error('Erro ao carregar restaurantes');
+                showEmptyState();
+            }
+        } catch (error) {
+            console.error('Erro na API:', error);
+            showEmptyState();
+        }
+    }
+
+    // Função para atualizar cabeçalho da categoria
+    function updateCategoryHeader(categoria) {
+        const category = categoryInfo[categoria];
+        if (category) {
+            categoryTitle.textContent = category.name;
+            categoryDescription.textContent = category.description;
+            categoryImage.src = category.image;
+            categoryImage.alt = category.name;
+        }
+        restaurantCount.textContent = `${currentRestaurants.length} restaurantes`;
+        document.title = `${category?.name || "Categoria"} - Fast4you`;
+    }
+
+    // Função para mostrar estado vazio
+    function showEmptyState() {
+        restaurantsGrid.style.display = "none";
+        emptyState.style.display = "block";
+    }
+
+
 // Initialize category page
 function initializePage() {
-  currentCategory = getCategoryFromURL()
-  currentRestaurants = restaurantData[currentCategory] || []
-  filteredRestaurants = [...currentRestaurants]
-
-  // Update category header
-  const category = categoryInfo[currentCategory]
-  if (category) {
-    categoryTitle.textContent = category.name
-    categoryDescription.textContent = category.description
-    categoryImage.src = category.image
-    categoryImage.alt = category.name
-    restaurantCount.textContent = `${currentRestaurants.length} restaurantes`
-  }
-
-  // Update page title
-  document.title = `${category?.name || "Categoria"} - Fast4you`
-
-  renderRestaurants(filteredRestaurants)
+    currentCategory = getCategoryFromURL();
+    loadRestaurantsFromAPI(currentCategory);  // Carregar da API em vez de hardcoded
 }
 
 // Event listeners
@@ -605,3 +403,5 @@ document.addEventListener("DOMContentLoaded", () => {
     </script>
 </body>
 </html>
+
+

@@ -162,175 +162,10 @@
         }
       }
     };
+
+    
         
-const restaurantData = {
-  1: {
-    name: "Burger King",
-    cuisine: "Fast Food",
-    image: "../static/imagens/Lanches.jpg",
-    rating: 4.5,
-    deliveryTime: "20-30 min",
-    deliveryFee: "Grátis",
-    plans: [
-      {
-        id: "basic",
-        title: "Plano Básico",
-        description: "Ideal para quem quer experimentar nossos sabores",
-        price: "R$ 19,90",
-        period: "/mês",
-        features: [
-          "Lanches até R$ 20,00",
-          "Entrega grátis",
-          "Lanches Novos todo Mes",
-          "Suporte prioritário",
-        ],
-      },
-      {
-        id: "premium",
-        title: "Plano Premium",
-        description: "Para os verdadeiros amantes de hambúrguer",
-        price: "R$ 39,90",
-        period: "/mês",
-        popular: true,
-        features: [
-          "Lanches acima de R$ 30,00",
-          "Entrega grátis",
-          "Acesso antecipado a novos produtos",
-          "Brinde mensal exclusivo",
-          "Suporte VIP 24/7",
-        ],
-      },
-      {
-        id: "family",
-        title: "Plano Família",
-        description: "Perfeito para compartilhar com toda a família",
-        price: "R$ 59,90",
-        period: "/mês",
-        features: [
-          "Lanches acima de R$ 40,00 para até 4 pessoas ",
-          "Entrega grátis",
-          "Válido para até 4 pessoas",
-          "Combos familiares exclusivos",
-          "Festa de aniversário grátis",
-        ],
-      },
-    ],
-  },
-  2: {
-    name: "McDonald's",
-    cuisine: "Fast Food",
-    image: "../static/imagens/Mc.png",
-    rating: 4.3,
-    deliveryTime: "25-35 min",
-    deliveryFee: "R$ 3,99",
-    plans: [
-      {
-        id: "basic",
-        title: "McPlano Básico",
-        description: "Comece sua jornada McDonald's",
-        price: "R$ 24,90",
-        period: "/mês",
-        features: [
-          "Lanches de até R$ 25,00",
-          "Entrega grátis em pedidos acima de R$ 30",
-          "Acesso ao app exclusivo",
-          "Pontos em dobro no programa de fidelidade",
-        ],
-      },
-      {
-        id: "premium",
-        title: "McPlano Premium",
-        description: "A experiência completa McDonald's",
-        price: "R$ 44,90",
-        period: "/mês",
-        popular: true,
-        features: [
-          "Pedidos acima de R$ 35,00",
-          "Entrega grátis",
-          "Acesso antecipado a novos produtos",
-          "Happy Meal grátis no aniversário",
-          "Atendimento prioritário",
-        ],
-      },
-    ],
-  },
-  5: {
-    name: "Domino's Pizza",
-    cuisine: "Pizzaria",
-    image: "fresh-pizza-margherita-with-basil.jpg",
-    rating: 4.6,
-    deliveryTime: "25-35 min",
-    deliveryFee: "Grátis",
-    plans: [
-      {
-        id: "basic",
-        title: "Pizza Lover",
-        description: "Para os amantes de pizza",
-        price: "R$ 29,90",
-        period: "/mês",
-        features: [
-          "20% de desconto em pizzas",
-          "Entrega grátis em pedidos acima de R$ 40",
-          "Pizza grátis no seu aniversário",
-          "Acesso a sabores exclusivos",
-        ],
-      },
-      {
-        id: "premium",
-        title: "Pizza Master",
-        description: "A experiência definitiva em pizzas",
-        price: "R$ 49,90",
-        period: "/mês",
-        popular: true,
-        features: [
-          "30% de desconto em todas as pizzas",
-          "Entrega grátis ilimitada",
-          "2 pizzas grátis por mês",
-          "Acesso antecipado a novos sabores",
-          "Personalização exclusiva de pizzas",
-        ],
-      },
-    ],
-  },
-  6: {
-    name: "Pizza Hut",
-    cuisine: "Pizzaria",
-    image: "fresh-pizza-margherita-with-basil.jpg",
-    rating: 4.6,
-    deliveryTime: "25-35 min",
-    deliveryFee: "Grátis",
-    plans: [
-      {
-        id: "basic",
-        title: "Pizza Lover",
-        description: "Para os amantes de pizza",
-        price: "R$ 29,90",
-        period: "/mês",
-        features: [
-          "20% de desconto em pizzas",
-          "Entrega grátis em pedidos acima de R$ 40",
-          "Pizza grátis no seu aniversário",
-          "Acesso a sabores exclusivos",
-        ],
-      },
-      {
-        id: "premium",
-        title: "Pizza Master",
-        description: "A experiência definitiva em pizzas",
-        price: "R$ 49,90",
-        period: "/mês",
-        popular: true,
-        features: [
-          "30% de desconto em todas as pizzas",
-          "Entrega grátis ilimitada",
-          "2 pizzas grátis por mês",
-          "Acesso antecipado a novos sabores",
-          "Personalização exclusiva de pizzas",
-        ],
-      },
-    ],
-  },
-}
+// Removido o objeto restaurantData hardcoded, pois agora os dados serão buscados dinamicamente do backend.
 
 // DOM elements
 const restaurantName = document.getElementById("restaurantName")
@@ -345,6 +180,23 @@ const plansGrid = document.getElementById("plansGrid")
 function getRestaurantIdFromURL() {
   const urlParams = new URLSearchParams(window.location.search)
   return urlParams.get("restaurante") || "1"
+}
+
+// Função para buscar dados do restaurante do backend
+async function fetchRestaurantData(restaurantId) {
+  try {
+    const response = await fetch(`http://localhost:5000/restaurante/${restaurantId}`, {
+      credentials: "include"  // Inclui cookies se necessário para autenticação
+    });
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar dados do restaurante: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;  // Espera-se que o backend retorne um objeto com name, cuisine, image, rating, deliveryTime, deliveryFee, plans (baseado na categoria)
+  } catch (error) {
+    console.error("Erro ao buscar dados do restaurante:", error);
+    return null;
+  }
 }
 
 // Create plan card HTML
@@ -380,9 +232,9 @@ function subscribeToPlan(planId) {
 }
 
 // Initialize page
-function initializePage() {
+async function initializePage() {
   const restaurantId = getRestaurantIdFromURL()
-  const restaurant = restaurantData[restaurantId]
+  const restaurant = await fetchRestaurantData(restaurantId)
 
   if (!restaurant) {
     // Redirect back if restaurant not found
@@ -402,7 +254,7 @@ function initializePage() {
   // Update page title
   document.title = `${restaurant.name} - Planos - Fast4You`
 
-  // Render plans
+  // Render plans (os planos vêm do backend, baseados na categoria do restaurante)
   plansGrid.innerHTML = restaurant.plans.map(createPlanCard).join("")
 }
 
