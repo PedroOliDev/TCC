@@ -165,7 +165,7 @@
 
     
         
-// Removido o objeto restaurantData hardcoded, pois agora os dados serão buscados dinamicamente do backend.
+
 
 // DOM elements
 const restaurantName = document.getElementById("restaurantName")
@@ -181,6 +181,10 @@ function getRestaurantIdFromURL() {
   const urlParams = new URLSearchParams(window.location.search)
   return urlParams.get("restaurante") || "1"
 }
+
+// NOVO: Variável global para armazenar a categoria do restaurante
+let currentCategoria = '';
+
 
 // Função para buscar dados do restaurante do backend
 async function fetchRestaurantData(restaurantId) {
@@ -226,15 +230,17 @@ function createPlanCard(plan) {
 
 // Subscribe to plan function
 function subscribeToPlan(planId) {
-  const restaurantId = getRestaurantIdFromURL()
-  // Redirect to subscription page with plan and restaurant info
-  window.location.href = `inscriçao.html?restaurante=${restaurantId}&plano=${planId}`
+    const restaurantId = getRestaurantIdFromURL()
+    // Redireciona para inscrição com restaurante, plano e categoria
+    window.location.href = `inscriçao.html?restaurante=${restaurantId}&plano=${planId}&categoria=${encodeURIComponent(currentCategoria)}`
 }
+
 
 // Initialize page
 async function initializePage() {
   const restaurantId = getRestaurantIdFromURL()
   const restaurant = await fetchRestaurantData(restaurantId)
+  currentCategoria = restaurant.cuisine;
 
   if (!restaurant) {
     // Redirect back if restaurant not found
@@ -242,11 +248,27 @@ async function initializePage() {
     return
   }
 
+  // Processar imagem: tornar absoluta e usar fallback
+  let imageSrc = '../static/imagens/default_restaurante.png';  // Fallback padrão
+  if (restaurant.image) {
+    if (restaurant.image.startsWith('/')) {
+      imageSrc = `http://localhost:5000${restaurant.image}`;  // Já absoluto
+    } else if (restaurant.image.startsWith('../')) {
+      imageSrc = `http://localhost:5000${restaurant.image.replace('../', '/')}`;  // Converte relativo
+    } else {
+      imageSrc = restaurant.image;  // URL externa
+    }
+  }
+
   // Update restaurant info
   restaurantName.textContent = restaurant.name
   restaurantCuisine.textContent = restaurant.cuisine
-  restaurantImage.src = restaurant.image
+  restaurantImage.src = imageSrc
   restaurantImage.alt = restaurant.name
+  restaurantImage.onerror = function() {
+    console.log('Fallback ativado para imagem do restaurante:', restaurant.name);
+    this.src = '../static/imagens/default_restaurante.png';
+  };
   restaurantRating.textContent = restaurant.rating
   restaurantDeliveryTime.textContent = restaurant.deliveryTime
   restaurantDeliveryFee.textContent = restaurant.deliveryFee
@@ -257,6 +279,8 @@ async function initializePage() {
   // Render plans (os planos vêm do backend, baseados na categoria do restaurante)
   plansGrid.innerHTML = restaurant.plans.map(createPlanCard).join("")
 }
+
+
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", initializePage)

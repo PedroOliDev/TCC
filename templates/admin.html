@@ -2,22 +2,237 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Admin - Gerenciar Restaurantes e Clientes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração - Fast4You</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        button { margin: 5px; padding: 5px 10px; cursor: pointer; }
-        form { margin-bottom: 20px; background: #f5f5f5; padding: 15px; border-radius: 8px; }
-        input, textarea, select { display: block; margin: 5px 0; width: 100%; padding: 8px; }
-        img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
-        h2 { margin-top: 40px; }
+        /* Reset básico para consistência */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Corpo principal: Fundo branco, fonte moderna */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff; /* Branco */
+            color: #333; /* Texto escuro para contraste */
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Header: Centralizado, com destaque em vermelho */
+        h1 {
+            text-align: center;
+            color: #dc143c; /* Vermelho escuro */
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        /* Botão de Logout: Estilo vermelho moderno */
+        button[onclick="logout()"] {
+            display: block;
+            margin: 0 auto 30px;
+            background-color: #dc143c; /* Vermelho */
+            color: #ffffff; /* Branco */
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button[onclick="logout()"]:hover {
+            background-color: #b22222; /* Vermelho mais escuro no hover */
+            transform: translateY(-2px);
+        }
+
+        /* Seção de ações admin: Flex para alinhar botões */
+        .admin-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .btn-graficos {
+            background-color: #dc143c; /* Vermelho */
+            color: #ffffff; /* Branco */
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-graficos:hover {
+            background-color: #b22222; /* Vermelho mais escuro */
+            transform: translateY(-2px);
+        }
+
+        /* Títulos de seção: Vermelho, com margem */
+        h2 {
+            color: #dc143c; /* Vermelho */
+            margin: 40px 0 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #dc143c; /* Linha vermelha sutil */
+            padding-bottom: 10px;
+        }
+
+        /* Formulário: Fundo cinza claro, bordas arredondadas, sombra */
+        form {
+            background-color: #f9f9f9; /* Cinza muito claro */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        form label {
+            font-weight: bold;
+            color: #dc143c; /* Vermelho para labels */
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        form input:focus, form textarea:focus, form select:focus {
+            border-color: #dc143c; /* Foco vermelho */
+            outline: none;
+        }
+
+        form button[type="submit"] {
+            background-color: #dc143c; /* Vermelho */
+            color: #ffffff; /* Branco */
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #b22222; /* Vermelho mais escuro */
+            transform: translateY(-2px);
+        }
+
+        /* Tabelas: Design moderno com zebrado e hover */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #dc143c; /* Vermelho */
+            color: #ffffff; /* Branco */
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9; /* Zebrado cinza claro */
+        }
+
+        tbody tr:hover {
+            background-color: #ffeaea; /* Hover vermelho claro */
+        }
+
+        /* Imagens na tabela: Bordas arredondadas */
+        img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        /* Botões nas tabelas: Vermelho */
+        table button {
+            background-color: #dc143c; /* Vermelho */
+            color: #ffffff; /* Branco */
+            border: none;
+            padding: 8px 15px;
+            margin: 2px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        table button:hover {
+            background-color: #b22222; /* Vermelho mais escuro */
+        }
+
+        /* Responsividade: Para telas menores */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            form {
+                padding: 15px;
+            }
+            table {
+                font-size: 0.9em;
+            }
+            th, td {
+                padding: 8px;
+            }
+            .admin-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
     <h1>Painel de Administração</h1>
     <p>Bem-vindo, {{ session['usuario_nome'] }}!</p>
     <button onclick="logout()">Logout</button>
+
+    <div class="admin-actions">
+        <!-- Outros botões existentes, se houver -->
+        <button onclick="window.location.href='/graficos'" class="btn-graficos">
+            Ver Gráficos
+        </button>
+    </div>
 
     <h2>Gerenciar Restaurantes</h2>
     <form id="restauranteForm" enctype="multipart/form-data">
@@ -96,6 +311,9 @@
         <tbody></tbody>
     </table>
 
+
+
+
 <script>
 const apiBase = 'http://localhost:5000';
 
@@ -124,7 +342,7 @@ function loadRestaurantes() {
                 tbody.innerHTML += `
                     <tr>
                         <td>${r.id}</td>
-                        <td><img src="${r.image || '/static/imagens/default_restaurante.png'}"></td>
+                        <td><img src="${r.image || '/static/imagens/default_restaurante.jpg'}"></td>
                         <td>${r.nome}</td>
                         <td>${r.categoria || '-'}</td>
                         <td>${r.rating || '-'}</td>

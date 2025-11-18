@@ -59,10 +59,21 @@ def criar_assinatura():
     endereco = data.get('endereco')
     dia = data.get('dia')
     metodo = data.get('metodo')
-    usuario_id = session['usuario_id']
+    usuario_id = session['usuario_id']  # GARANTA QUE ESTA LINHA ESTEJA AQUI!
+    categoria = data.get('categoria')  # Novo
+    plano_id = data.get('plano')  # Novo
 
     if not endereco or not dia or not metodo:
         return jsonify({'message': 'Campos obrigatórios faltando'}), 400
+
+    # Mapeia o id do plano para o title usando a categoria
+    plano = 'Plano básico'  # Fallback
+    if categoria and categoria in PLANOS_POR_CATEGORIA:
+        planos = PLANOS_POR_CATEGORIA[categoria]
+        for p in planos:
+            if p['id'] == plano_id:
+                plano = p['title']
+                break
 
     if metodo == 'cartao':
         cc = data.get('cc') or {}
@@ -83,9 +94,9 @@ def criar_assinatura():
 
         cursor.execute("""
             INSERT INTO assinaturas 
-            (id_usuario, data_inicio, status, proximo_pagamento, dia, endereco, metodo_pagamento, detalhe_pagamento)
-            VALUES (%s, %s, 'ativa', %s, %s, %s, %s, %s)
-        """, (usuario_id, data_inicio, proximo, dia, endereco, metodo, detalhe_pag))
+            (id_usuario, data_inicio, status, proximo_pagamento, dia, endereco, metodo_pagamento, detalhe_pagamento, plano)
+            VALUES (%s, %s, 'ativa', %s, %s, %s, %s, %s, %s)
+        """, (usuario_id, data_inicio, proximo, dia, endereco, metodo, detalhe_pag, plano))
 
         conn.commit()
 
@@ -97,7 +108,8 @@ def criar_assinatura():
                 'status': 'ativa',
                 'dia': dia,
                 'endereco': endereco,
-                'metodo': metodo
+                'metodo': metodo,
+                'plano': plano
             }
         }), 200
 
@@ -107,7 +119,6 @@ def criar_assinatura():
         if conn.is_connected():
             cursor.close()
             conn.close()
-
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -452,23 +463,26 @@ def create_restaurante():
     tags = request.form.get('tags', '[]')
     badge = request.form.get('badge')
 
-      # Novo: Processar upload de foto
     foto_url = None
-    foto = request.files.get('foto')
+    foto = request.files.get('foto')  # Nota: No HTML, o campo é 'foto', mas aqui é 'imagens' – ajuste para 'foto' se necessário
     if foto:
-        # Garante que a pasta existe
-        pasta_fotos = os.path.join(app.root_path, 'static', 'fotos')
+        pasta_fotos = os.path.join(app.root_path, 'static', 'imagens')
         if not os.path.exists(pasta_fotos):
             os.makedirs(pasta_fotos)
         
-        # Mantém a extensão original
         extensao = os.path.splitext(foto.filename)[1]
-        nome_arquivo = f'restaurante_{nome.replace(" ", "_")}{extensao}'  # Nome único
+        nome_arquivo = f'restaurante_{nome.replace(" ", "_")}{extensao}'
         caminho_foto = os.path.join(pasta_fotos, nome_arquivo)
-        foto.save(caminho_foto)
+        try:
+            foto.save(caminho_foto)
+            foto_url = f'/static/imagens/{nome_arquivo}'  # Caminho relativo, mas será prefixado no frontend
+            print(f"Imagem salva com sucesso: {foto_url}")  # Log para depuração
+        except Exception as e:
+            print(f"Erro ao salvar imagem: {str(e)}")  # Log de erro
+            foto_url = None  # Fallback para imagem padrão
         
-        # URL para acessar via navegador
-        foto_url = f'/static/fotos/{nome_arquivo}'
+       
+        
     if not nome:
         return jsonify({'message': 'Nome é obrigatório'}), 400
     try:
@@ -506,7 +520,7 @@ def update_restaurante(id):
 
     foto_url = None
     if foto:
-        pasta_fotos = os.path.join(app.root_path, 'static', 'fotos')
+        pasta_fotos = os.path.join(app.root_path, 'static', 'imagens')
         if not os.path.exists(pasta_fotos):
             os.makedirs(pasta_fotos)
 
@@ -514,7 +528,7 @@ def update_restaurante(id):
         nome_arquivo = f'restaurante_{nome.replace(" ", "_")}{extensao}'
         caminho_foto = os.path.join(pasta_fotos, nome_arquivo)
         foto.save(caminho_foto)
-        foto_url = f'/static/fotos/{nome_arquivo}'
+        foto_url = f'/static/imagens/{nome_arquivo}'
 
     try:
         conn = conectar()
@@ -740,7 +754,7 @@ PLANOS_POR_CATEGORIA = {
             "features": ["30% de desconto em todos os pratos japoneses", "Entrega grátis ilimitada", "2 pratos gourmet grátis por mês", "Acesso antecipado a novos pratos"]
         }   
     ],
-    # Adicione mais categorias conforme necessário (ex.: "Italiana", "Japonesa")
+    # Adicione mais categorias conforme necessário 
     "default": [  # Plano padrão se a categoria não for encontrada
         {
             "id": "basic",
@@ -787,6 +801,124 @@ def get_restaurante_com_planos(id):
         if conn.is_connected():
             cursor.close()
             conn.close()
+
+@app.route('/api/graficos/categorias-restaurantes', methods=['GET'])
+def graficos_categorias_restaurantes():
+    if 'usuario_id' not in session or not session.get('is_admin', False):
+        return jsonify({'message': 'Acesso negado'}), 403
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT categoria, COUNT(*) AS total
+            FROM restaurantes
+            GROUP BY categoria
+            ORDER BY total DESC
+        """)
+        dados = cursor.fetchall()
+        return jsonify(dados), 200
+    except Error as e:
+        return jsonify({'message': f'Erro: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+@app.route('/api/graficos/planos-assinaturas', methods=['GET'])
+def graficos_planos_assinaturas():
+    if 'usuario_id' not in session or not session.get('is_admin', False):
+        return jsonify({'message': 'Acesso negado'}), 403
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT plano, COUNT(*) AS total
+            FROM assinaturas
+            GROUP BY plano
+            ORDER BY total DESC
+        """)
+        dados = cursor.fetchall()
+        return jsonify(dados), 200
+    except Error as e:
+        return jsonify({'message': f'Erro: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+@app.route('/api/graficos/categorias-assinaturas', methods=['GET'])
+def graficos_categorias_assinaturas():
+    if 'usuario_id' not in session or not session.get('is_admin', False):
+        return jsonify({'message': 'Acesso negado'}), 403
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT r.categoria, COUNT(a.id) AS total_assinaturas
+            FROM assinaturas a
+            JOIN restaurantes r ON a.plano LIKE CONCAT('%', r.categoria, '%')
+            GROUP BY r.categoria
+            ORDER BY total_assinaturas DESC
+        """)
+        dados = cursor.fetchall()
+        return jsonify(dados), 200
+    except Error as e:
+        return jsonify({'message': f'Erro: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+@app.route('/api/graficos/usuarios-tipo', methods=['GET'])
+def graficos_usuarios_tipo():
+    if 'usuario_id' not in session or not session.get('is_admin', False):
+        return jsonify({'message': 'Acesso negado'}), 403
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT CASE WHEN is_admin = 1 THEN 'Admin' ELSE 'Usuário Comum' END AS tipo,
+                COUNT(*) AS total
+            FROM usuarios
+            GROUP BY is_admin
+        """)
+        dados = cursor.fetchall()
+        return jsonify(dados), 200
+    except Error as e:
+        return jsonify({'message': f'Erro: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+@app.route('/api/graficos/assinaturas-mensal', methods=['GET'])
+def graficos_assinaturas_mensal():
+    if 'usuario_id' not in session or not session.get('is_admin', False):
+        return jsonify({'message': 'Acesso negado'}), 403
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT DATE_FORMAT(data_inicio, '%Y-%m') AS mes, COUNT(*) AS total
+            FROM assinaturas
+            GROUP BY mes
+            ORDER BY mes
+        """)
+        dados = cursor.fetchall()
+        return jsonify(dados), 200
+    except Error as e:
+        return jsonify({'message': f'Erro: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+@app.route('/graficos')
+def graficos_page():
+    if 'usuario_id' not in session or not session.get('is_admin', False):
+        return redirect(url_for('login_page'))  # Redireciona para login se não for admin
+    return render_template('graficos.html')  # Template HTML que criaremos
 
 if __name__ == '__main__':
     app.run(debug=True)

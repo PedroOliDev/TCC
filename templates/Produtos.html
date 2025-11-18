@@ -187,6 +187,8 @@ function getCategoryFromURL() {
   return urlParams.get("categoria") || "lanches"
 }
 
+
+
 // Create restaurant card HTML
 function createRestaurantCard(restaurant) {
   return `
@@ -328,8 +330,10 @@ function applyFilter(filterType) {
                 currentRestaurants = data.map(r => ({
                     id: r.id,
                     name: r.name,
-                    cuisine: r.cuisine || 'Categoria Geral',  // Usar endereco como placeholder
-                    image: r.image,
+                    cuisine: r.cuisine || 'Categoria Geral', 
+                    image: r.image && r.image.startsWith('/') 
+                    ? `http://localhost:5000${r.image}`  // Torna absoluto
+                    : '../static/imagens/default_restaurante.png',  // Fallback local se vazio
                     rating: r.rating,
                     deliveryTime: r.delivery_time,
                     deliveryFee: r.delivery_fee,
@@ -351,16 +355,18 @@ function applyFilter(filterType) {
 
     // Função para atualizar cabeçalho da categoria
     function updateCategoryHeader(categoria) {
-        const category = categoryInfo[categoria];
-        if (category) {
-            categoryTitle.textContent = category.name;
-            categoryDescription.textContent = category.description;
-            categoryImage.src = category.image;
-            categoryImage.alt = category.name;
-        }
-        restaurantCount.textContent = `${currentRestaurants.length} restaurantes`;
-        document.title = `${category?.name || "Categoria"} - Fast4you`;
+    const category = categoryInfo[categoria];
+    if (category) {
+        categoryTitle.textContent = category.name;
+        categoryDescription.textContent = category.description;
+        categoryImage.src = category.image.startsWith('../') 
+            ? `http://localhost:5000${category.image.replace('../', '/')}`  // Torna absoluto
+            : category.image;
+        categoryImage.alt = category.name;
     }
+    restaurantCount.textContent = `${currentRestaurants.length} restaurantes`;
+    document.title = `${category?.name || "Categoria"} - Fast4you`;
+}
 
     // Função para mostrar estado vazio
     function showEmptyState() {
