@@ -17,7 +17,7 @@ def conectar():
     return mysql.connector.connect(
         host='localhost',
         user='root',
-        password='Senai@118',
+        password='21102110p',
         database='food4you_db'
     )
 
