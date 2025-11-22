@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5500"}})
 app.secret_key = 'uma_chave_secreta_segura'
 
-# 🔧 Conexão com MySQL
+
 def conectar():
     return mysql.connector.connect(
         host='localhost',
@@ -59,15 +59,15 @@ def criar_assinatura():
     endereco = data.get('endereco')
     dia = data.get('dia')
     metodo = data.get('metodo')
-    usuario_id = session['usuario_id']  # GARANTA QUE ESTA LINHA ESTEJA AQUI!
-    categoria = data.get('categoria')  # Novo
-    plano_id = data.get('plano')  # Novo
+    usuario_id = session['usuario_id']  
+    categoria = data.get('categoria')  
+    plano_id = data.get('plano')  
 
     if not endereco or not dia or not metodo:
         return jsonify({'message': 'Campos obrigatórios faltando'}), 400
 
-    # Mapeia o id do plano para o title usando a categoria
-    plano = 'Plano básico'  # Fallback
+    
+    plano = 'Plano básico'  
     if categoria and categoria in PLANOS_POR_CATEGORIA:
         planos = PLANOS_POR_CATEGORIA[categoria]
         for p in planos:
@@ -139,9 +139,9 @@ def register():
             (nome, email, senha)
         )
         conn.commit()
-        usuario_id = cursor.lastrowid  # pega o ID do usuário recém-criado
+        usuario_id = cursor.lastrowid  
 
-        # Armazena dados na sessão
+        
         session['usuario_id'] = usuario_id
         session['usuario_nome'] = nome
         session['usuario_email'] = email
@@ -180,7 +180,7 @@ def login():
             session['usuario_id'] = usuario['id']
             session['usuario_nome'] = usuario['nome']
             session['usuario_email'] = usuario['email']
-            session['is_admin'] = usuario['is_admin'] == 1  # Novo: armazena se é admin
+            session['is_admin'] = usuario['is_admin'] == 1  
             return jsonify({'message': 'Login bem-sucedido!', 'usuario': usuario}), 200
         else:
             return jsonify({'message': 'Email ou senha inválidos'}), 401
@@ -271,20 +271,20 @@ def atualizar_perfil():
 
         foto_url = None
         if foto:
-            # Garante que a pasta existe dentro do projeto
+            
             pasta_fotos = os.path.join(app.root_path, 'static', 'fotos')
             if not os.path.exists(pasta_fotos):
                 os.makedirs(pasta_fotos)
 
-            # Mantém a extensão original da foto
+        
             extensao = os.path.splitext(foto.filename)[1]
             caminho_foto = os.path.join(pasta_fotos, f'{usuario_id}{extensao}')
             foto.save(caminho_foto)
 
-            # URL que o navegador consegue acessar via Flask
+            
             foto_url = f'/static/fotos/{usuario_id}{extensao}'
 
-        # Atualiza dados no banco
+        
         query = "UPDATE usuarios SET nome=%s, senha=%s"
         valores = [nome, senha]
         if foto_url:
@@ -296,7 +296,7 @@ def atualizar_perfil():
         cursor.execute(query, valores)
         conn.commit()
 
-        # Atualiza sessão
+        
         session['usuario_nome'] = nome
         if foto_url:
             session['usuario_foto'] = foto_url
@@ -336,7 +336,7 @@ def historico_assinaturas():
         """, (usuario_id,))
         historico = cursor.fetchall()
 
-        # Formata para o frontend
+        
         resultado = []
         for item in historico:
             resultado.append({
@@ -375,11 +375,11 @@ def assinaturas_mais_consumidas():
         """, (usuario_id,))
         resultados = cursor.fetchall()
 
-        # Convertemos para o formato esperado pelo frontend
+        
         lista = []
         for item in resultados:
             plano = item['plano'] or 'Plano básico'
-            dias = item['total'] * 30  # assumindo 30 dias por assinatura
+            dias = item['total'] * 30  
             lista.append({
                 'plano': plano,
                 'dias': dias
@@ -399,10 +399,10 @@ def assinaturas_mais_consumidas():
 @app.route('/admin')
 def admin_page():
     if 'usuario_id' not in session or not session.get('is_admin', False):
-        return redirect(url_for('login_page'))  # Redireciona para login se não for admin
-    return render_template('admin.html')  # Serve o template HTML
+        return redirect(url_for('login_page'))  
+    return render_template('admin.html')  
 
-# API: Obter restaurante por ID
+
 @app.route('/api/restaurantes/<int:id>', methods=['GET'])
 def get_restaurante(id):
     if 'usuario_id' not in session or not session.get('is_admin', False):
@@ -428,7 +428,7 @@ def get_restaurante(id):
             conn.close()
 
 
-# API: Listar restaurantes
+
 @app.route('/api/restaurantes', methods=['GET'])
 def get_restaurantes():
     if 'usuario_id' not in session or not session.get('is_admin', False):
@@ -447,7 +447,7 @@ def get_restaurantes():
             conn.close()
 
 
-# API: Criar restaurante
+
 @app.route('/api/restaurantes', methods=['POST'])
 def create_restaurante():
     if 'usuario_id' not in session or not session.get('is_admin', False):
@@ -464,7 +464,7 @@ def create_restaurante():
     badge = request.form.get('badge')
 
     foto_url = None
-    foto = request.files.get('foto')  # Nota: No HTML, o campo é 'foto', mas aqui é 'imagens' – ajuste para 'foto' se necessário
+    foto = request.files.get('foto') 
     if foto:
         pasta_fotos = os.path.join(app.root_path, 'static', 'imagens')
         if not os.path.exists(pasta_fotos):
@@ -475,11 +475,11 @@ def create_restaurante():
         caminho_foto = os.path.join(pasta_fotos, nome_arquivo)
         try:
             foto.save(caminho_foto)
-            foto_url = f'/static/imagens/{nome_arquivo}'  # Caminho relativo, mas será prefixado no frontend
-            print(f"Imagem salva com sucesso: {foto_url}")  # Log para depuração
+            foto_url = f'/static/imagens/{nome_arquivo}'  
+            print(f"Imagem salva com sucesso: {foto_url}")  
         except Exception as e:
-            print(f"Erro ao salvar imagem: {str(e)}")  # Log de erro
-            foto_url = None  # Fallback para imagem padrão
+            print(f"Erro ao salvar imagem: {str(e)}")  
+            foto_url = None  
         
        
         
@@ -561,7 +561,7 @@ def update_restaurante(id):
             cursor.close()
             conn.close()
 
-# API: Deletar restaurante
+
 @app.route('/api/restaurantes/<int:id>', methods=['DELETE'])
 def delete_restaurante(id):
     if 'usuario_id' not in session or not session.get('is_admin', False):
@@ -579,7 +579,7 @@ def delete_restaurante(id):
             cursor.close()
             conn.close()
 
-# API: Listar clientes (usuários)
+
 @app.route('/api/clientes', methods=['GET'])
 def get_clientes():
     if 'usuario_id' not in session or not session.get('is_admin', False):
@@ -597,7 +597,7 @@ def get_clientes():
             cursor.close()
             conn.close()
 
-# API: Atualizar cliente (ex.: tornar admin ou editar nome)
+
 @app.route('/api/clientes/<int:id>', methods=['PUT'])
 def update_cliente(id):
     if 'usuario_id' not in session or not session.get('is_admin', False):
@@ -618,7 +618,7 @@ def update_cliente(id):
             cursor.close()
             conn.close()
 
-# API: Deletar cliente
+
 @app.route('/api/clientes/<int:id>', methods=['DELETE'])
 def delete_cliente(id):
     if 'usuario_id' not in session or not session.get('is_admin', False):
@@ -648,7 +648,7 @@ def get_restaurantes_por_categoria(categoria):
             WHERE categoria = %s
         """, (categoria,))
         restaurantes = cursor.fetchall()
-        # Processar tags (de string JSON para lista)
+        
         for r in restaurantes:
             try:
                 r['tags'] = json.loads(r['tags']) if r['tags'] else []
@@ -662,7 +662,7 @@ def get_restaurantes_por_categoria(categoria):
             cursor.close()
             conn.close()
 
-# Dicionário de planos por categoria (pode ser movido para uma tabela no banco futuramente)
+
 PLANOS_POR_CATEGORIA = {
     "Lanches": [
         {
@@ -754,8 +754,8 @@ PLANOS_POR_CATEGORIA = {
             "features": ["30% de desconto em todos os pratos japoneses", "Entrega grátis ilimitada", "2 pratos gourmet grátis por mês", "Acesso antecipado a novos pratos"]
         }   
     ],
-    # Adicione mais categorias conforme necessário 
-    "default": [  # Plano padrão se a categoria não for encontrada
+    
+    "default": [ 
         {
             "id": "basic",
             "title": "Plano Básico",
@@ -769,7 +769,7 @@ PLANOS_POR_CATEGORIA = {
 
 }
 
-# Nova rota pública para buscar restaurante com planos baseados na categoria
+
 @app.route('/restaurante/<int:id>', methods=['GET'])
 def get_restaurante_com_planos(id):
     try:
@@ -785,11 +785,11 @@ def get_restaurante_com_planos(id):
         if not restaurante:
             return jsonify({'message': 'Restaurante não encontrado'}), 404
         
-        # Obtém planos baseados na categoria
+        
         categoria = restaurante.get('cuisine', 'default')
         plans = PLANOS_POR_CATEGORIA.get(categoria, PLANOS_POR_CATEGORIA['default'])
         
-        # Adiciona os planos ao resultado
+        
         restaurante['plans'] = plans
         
         return jsonify(restaurante), 200
@@ -917,8 +917,8 @@ def graficos_assinaturas_mensal():
 @app.route('/graficos')
 def graficos_page():
     if 'usuario_id' not in session or not session.get('is_admin', False):
-        return redirect(url_for('login_page'))  # Redireciona para login se não for admin
-    return render_template('graficos.html')  # Template HTML que criaremos
+        return redirect(url_for('login_page'))  
+    return render_template('graficos.html') 
 
 if __name__ == '__main__':
     app.run(debug=True)
