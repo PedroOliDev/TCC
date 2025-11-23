@@ -5,6 +5,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Assinatura com Pagamento</title>
+  <style>
+    /* Estilos adicionais para o modal de avaliação */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .stars {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .star {
+      font-size: 30px;
+      color: #ddd;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    .star.selected {
+      color: #ffd700;
+    }
+    .comentario {
+      width: 100%;
+      height: 80px;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .btn-avaliar {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn-avaliar:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
   <img src="../static/imagens/logoTCC.jpg" alt="logo" class="logo">
@@ -52,6 +123,24 @@
       <button type="button" id="btnAssinar">Assinar agora</button>
       <p class="status" id="status"></p>
     </form>
+  </div>
+
+  <!-- Modal de Avaliação -->
+  <div id="avaliacaoModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal()">&times;</span>
+      <h2>Avalie o Restaurante</h2>
+      <p>Deixe sua avaliação de 1 a 5 estrelas:</p>
+      <div class="stars" id="estrelas">
+        <span class="star" data-value="1">&#9733;</span>
+        <span class="star" data-value="2">&#9733;</span>
+        <span class="star" data-value="3">&#9733;</span>
+        <span class="star" data-value="4">&#9733;</span>
+        <span class="star" data-value="5">&#9733;</span>
+      </div>
+      <textarea id="comentario" class="comentario" placeholder="Comentário opcional..."></textarea>
+      <button class="btn-avaliar" onclick="enviarAvaliacao()">Enviar Avaliação</button>
+    </div>
   </div>
 
   <script>
@@ -283,14 +372,56 @@
     const titulo = document.getElementById("titulo-restaurante");
 
     if (restaurant) {
-      // AJUSTADO: Inclui o plano selecionado no título
+      
       const planTitle = getPlanTitle(planoId, restaurant);
       titulo.innerText = `${restaurant.name} - ${planTitle}`;
     } else {
       titulo.innerText = "Restaurante não encontrado";
     }
 
-    // AJUSTADO: Event listener para o botão, incluindo plano e categoria no payload
+    // Variáveis para avaliação
+    let estrelasSelecionadas = 0;
+
+    // Adicionar event listeners para estrelas
+    document.querySelectorAll('.star').forEach(star => {
+      star.addEventListener('click', () => {
+        estrelasSelecionadas = parseInt(star.dataset.value);
+        atualizarEstrelas(estrelasSelecionadas);
+      });
+    });
+
+    function atualizarEstrelas(num) {
+      document.querySelectorAll('.star').forEach((star, index) => {
+        if (index < num) {
+          star.classList.add('selected');
+        } else {
+          star.classList.remove('selected');
+        }
+      });
+    }
+
+    function mostrarModal() {
+      document.getElementById('avaliacaoModal').style.display = 'block';
+    }
+
+    function fecharModal() {
+      document.getElementById('avaliacaoModal').style.display = 'none';
+      estrelasSelecionadas = 0;
+      atualizarEstrelas(0);
+      document.getElementById('comentario').value = '';
+    }
+
+    function enviarAvaliacao() {
+      if (estrelasSelecionadas < 1 || estrelasSelecionadas > 5) {
+        alert('Selecione de 1 a 5 estrelas.');
+        return;
+      }
+      const comentario = document.getElementById('comentario').value;
+      avaliarRestaurante(restauranteId, estrelasSelecionadas, comentario);
+      fecharModal();
+      alert('Avaliação enviada! Obrigado.');
+    }
+
     document.getElementById('btnAssinar').addEventListener('click', () => {
       const btn = document.getElementById('btnAssinar');
       const status = document.getElementById('status');
@@ -301,8 +432,8 @@
         endereco: document.getElementById('endereco').value.trim(),
         dia: document.getElementById('dia').value,
         metodo: document.getElementById('metodo').value,
-        plano: planoId,  // NOVO: Inclui o id do plano
-        categoria: categoria  // NOVO: Inclui a categoria
+        plano: planoId,  
+        categoria: categoria  
       };
 
       if (metodo.value === 'cartao') {
@@ -325,6 +456,10 @@
       .then(({ status: st, body }) => {
         status.style.color = st === 200 ? 'green' : 'red';
         status.textContent = body.message || 'Erro';
+        if (st === 200) {
+          // Após sucesso, mostrar modal de avaliação
+          setTimeout(() => mostrarModal(), 1000);  // Pequeno delay para o usuário ver a mensagem
+        }
       })
       .catch(() => {
         status.style.color = 'red';
@@ -340,6 +475,39 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+
+    function avaliarRestaurante(restauranteId, estrelas, comentario = '') {
+      fetch('http://localhost:5000/avaliar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',  
+        body: JSON.stringify({
+          restaurante_id: restauranteId,
+          estrelas: estrelas,
+          comentario: comentario
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          console.log(data.message);
+        }
+      })
+      .catch(error => console.error('Erro:', error));
+    }
+
+    function carregarAvaliacoes(restauranteId) {
+      fetch(`http://localhost:5000/avaliacoes/${restauranteId}`, {
+        credentials: 'include'
+      })
+      .then(response => response.json())
+      .then(avaliacoes => {
+        console.log(avaliacoes);
+      })
+      .catch(error => console.error('Erro:', error));
     }
   </script>
 </body>

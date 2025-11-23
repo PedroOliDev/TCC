@@ -920,5 +920,83 @@ def graficos_page():
         return redirect(url_for('login_page'))  
     return render_template('graficos.html') 
 
+
+@app.route('/avaliar', methods=['POST'])
+def avaliar_restaurante():
+    if 'usuario_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
+
+    data = request.get_json()
+    restaurante_id = data.get('restaurante_id')
+    estrelas = data.get('estrelas')
+    comentario = data.get('comentario', '')
+
+    if not restaurante_id or not estrelas or estrelas < 1 or estrelas > 5:
+        return jsonify({'message': 'Dados inválidos. Estrelas devem ser de 1 a 5.'}), 400
+
+    usuario_id = session['usuario_id']
+
+    try:
+        conn = conectar()
+        cursor = conn.cursor()
+
+        
+        cursor.execute("""
+            SELECT id FROM avaliacoes WHERE usuario_id = %s AND restaurante_id = %s
+        """, (usuario_id, restaurante_id))
+        if cursor.fetchone():
+            return jsonify({'message': 'Você já avaliou este restaurante.'}), 409
+
+        
+        cursor.execute("""
+            INSERT INTO avaliacoes (usuario_id, restaurante_id, estrelas, comentario)
+            VALUES (%s, %s, %s, %s)
+        """, (usuario_id, restaurante_id, estrelas, comentario))
+        conn.commit()
+
+        
+        cursor.execute("""
+            SELECT AVG(estrelas) AS media FROM avaliacoes WHERE restaurante_id = %s
+        """, (restaurante_id,))
+        media = cursor.fetchone()[0]
+        if media:
+            cursor.execute("""
+                UPDATE restaurantes SET rating = %s WHERE id = %s
+            """, (round(media, 1), restaurante_id))
+            conn.commit()
+
+        return jsonify({'message': 'Avaliação enviada com sucesso!'}), 201
+
+    except Error as e:
+        return jsonify({'message': f'Erro ao avaliar: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+@app.route('/avaliacoes/<int:restaurante_id>', methods=['GET'])
+def get_avaliacoes(restaurante_id):
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT a.estrelas, a.comentario, a.data, u.nome AS usuario_nome
+            FROM avaliacoes a
+            JOIN usuarios u ON a.usuario_id = u.id
+            WHERE a.restaurante_id = %s
+            ORDER BY a.data DESC
+        """, (restaurante_id,))
+        avaliacoes = cursor.fetchall()
+        return jsonify(avaliacoes), 200
+    except Error as e:
+        return jsonify({'message': f'Erro ao carregar avaliações: {str(e)}'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
