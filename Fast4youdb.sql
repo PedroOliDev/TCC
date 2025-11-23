@@ -49,4 +49,21 @@ CREATE TABLE IF NOT EXISTS assinaturas (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
-select * from usuarios
+
+
+-- =======================
+-- TABELA DE AVALIAÇÕES
+-- =======================
+CREATE TABLE IF NOT EXISTS avaliacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    restaurante_id INT NOT NULL,
+    estrelas INT NOT NULL CHECK (estrelas >= 1 AND estrelas <= 5),
+    comentario TEXT,
+    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
+);
+
+
+
