@@ -7,8 +7,9 @@ from google.auth.transport import requests as grequests
 from datetime import date, timedelta
 import os
 import json
-import smtplib
-from email.mime.text import MIMEText
+import logging
+
+logging.basicConfig(level=logging.ERROR)
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5500"}})
@@ -571,11 +572,19 @@ def delete_restaurante(id):
     try:
         conn = conectar()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM restaurantes WHERE id=%s", (id,))
+        
+        # Primeiro, deletar dependências: assinaturas e avaliações do restaurante
+        cursor.execute("DELETE FROM assinaturas WHERE plano LIKE CONCAT('%', (SELECT nome FROM restaurantes WHERE id = %s), '%')", (id,))
+        cursor.execute("DELETE FROM avaliacoes WHERE restaurante_id = %s", (id,))
+        
+        # Agora, deletar o restaurante
+        cursor.execute("DELETE FROM restaurantes WHERE id = %s", (id,))
         conn.commit()
+        
         return jsonify({'message': 'Restaurante deletado com sucesso'}), 200
     except Error as e:
-        return jsonify({'message': f'Erro: {str(e)}'}), 500
+        logging.error(f"Erro ao deletar restaurante {id}: {str(e)}")
+        return jsonify({'message': f'Erro ao deletar restaurante: {str(e)}'}), 500
     finally:
         if conn.is_connected():
             cursor.close()
@@ -628,11 +637,19 @@ def delete_cliente(id):
     try:
         conn = conectar()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM usuarios WHERE id=%s", (id,))
+        
+        # Primeiro, deletar dependências: assinaturas e avaliações do usuário
+        cursor.execute("DELETE FROM assinaturas WHERE id_usuario = %s", (id,))
+        cursor.execute("DELETE FROM avaliacoes WHERE usuario_id = %s", (id,))
+        
+        # Agora, deletar o usuário
+        cursor.execute("DELETE FROM usuarios WHERE id = %s", (id,))
         conn.commit()
+        
         return jsonify({'message': 'Cliente deletado com sucesso'}), 200
     except Error as e:
-        return jsonify({'message': f'Erro: {str(e)}'}), 500
+        logging.error(f"Erro ao deletar cliente {id}: {str(e)}")
+        return jsonify({'message': f'Erro ao deletar cliente: {str(e)}'}), 500
     finally:
         if conn.is_connected():
             cursor.close()

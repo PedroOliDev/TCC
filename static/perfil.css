@@ -15,6 +15,15 @@
       overflow-x: hidden;
     }
 
+    .logo {
+      border-radius: 50%;
+      height: 15vh;
+      width: auto;
+      position: absolute;
+      top: 2px;
+      left: 50px;
+    }
+
     /* === Animação de Estrelas === */
     .stars {
       position: fixed;
