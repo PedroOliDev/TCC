@@ -7,6 +7,8 @@ from google.auth.transport import requests as grequests
 from datetime import date, timedelta
 import os
 import json
+import smtplib
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5500"}})
@@ -17,7 +19,7 @@ def conectar():
     return mysql.connector.connect(
         host='localhost',
         user='root',
-        password='21102110p',
+        password='Senai@118',
         database='food4you_db'
     )
 
