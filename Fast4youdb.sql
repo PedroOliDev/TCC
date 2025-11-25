@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS restaurantes (
 CREATE TABLE IF NOT EXISTS assinaturas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
+    restaurante_id INT NOT NULL,  -- Adicionado para relacionar com restaurantes
     plano VARCHAR(100) NOT NULL DEFAULT 'Plano básico',
     status VARCHAR(20) DEFAULT 'ativa',
     data_inicio DATE NOT NULL DEFAULT (CURRENT_DATE),
@@ -46,10 +47,9 @@ CREATE TABLE IF NOT EXISTS assinaturas (
     metodo_pagamento VARCHAR(20) NOT NULL,
     detalhe_pagamento VARCHAR(255),
 
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id) ON DELETE CASCADE  -- Foreign key adicionada
 );
-
-
 
 -- =======================
 -- TABELA DE AVALIAÇÕES
