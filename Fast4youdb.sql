@@ -13,6 +13,12 @@ CREATE TABLE IF NOT EXISTS usuarios (
     is_admin TINYINT(1) DEFAULT 0
 );
 
+-- Tornar um usuário admin (caso exista)
+UPDATE usuarios
+SET is_admin = 1
+WHERE email = 'admin@gmail.com';
+
+
 -- =======================
 -- TABELA DE RESTAURANTES
 -- =======================
@@ -31,13 +37,20 @@ CREATE TABLE IF NOT EXISTS restaurantes (
     image VARCHAR(255) DEFAULT '../static/imagens/default_restaurante.png'
 );
 
+-- Adicionar restaurante Burguer King automaticamente
+INSERT INTO restaurantes 
+(nome, endereco, telefone, descricao, categoria, rating, delivery_time, delivery_fee, tags, badge, image)
+VALUES 
+('Burguer king', 'endereço teste', '11976717289', 'Melhor restaurante', 'Lanches', '5', '10 min', '5', 'Mais pedido', 'Popular', '/static/imagens/restaurante_Burguer_king.png');
+
+
 -- =======================
 -- TABELA DE ASSINATURAS
 -- =======================
 CREATE TABLE IF NOT EXISTS assinaturas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
-    restaurante_id INT NOT NULL,  -- Adicionado para relacionar com restaurantes
+    restaurante_id INT NOT NULL,
     plano VARCHAR(100) NOT NULL DEFAULT 'Plano básico',
     status VARCHAR(20) DEFAULT 'ativa',
     data_inicio DATE NOT NULL DEFAULT (CURRENT_DATE),
@@ -48,7 +61,7 @@ CREATE TABLE IF NOT EXISTS assinaturas (
     detalhe_pagamento VARCHAR(255),
 
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id) ON DELETE CASCADE  -- Foreign key adicionada
+    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id) ON DELETE CASCADE
 );
 
 -- =======================
@@ -64,6 +77,3 @@ CREATE TABLE IF NOT EXISTS avaliacoes (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
 );
-
-
-
